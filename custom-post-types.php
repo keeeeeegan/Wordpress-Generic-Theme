@@ -658,4 +658,99 @@ class Person extends CustomPostType
 		return ob_get_clean();
 	}
 } // END class 
+
+
+/**
+ * Describes a graph
+ *
+ * @author Jo Greybill
+ **/
+class Graph extends CustomPostType
+{
+	/*
+	The following query will pre-populate the person_orderby_name
+	meta field with a guess of the last name extracted from the post title.
+	
+	>>>BE SURE TO REPLACE wp_<number>_... WITH THE APPROPRIATE SITE ID<<<
+	
+	INSERT INTO wp_29_postmeta(post_id, meta_key, meta_value) 
+	(	SELECT	id AS post_id, 
+						'person_orderby_name' AS meta_key, 
+						REVERSE(SUBSTR(REVERSE(post_title), 1, LOCATE(' ', REVERSE(post_title)))) AS meta_value
+		FROM		wp_29_posts AS posts
+		WHERE		post_type = 'person' AND
+						(	SELECT meta_id 
+							FROM wp_29_postmeta 
+							WHERE post_id = posts.id AND
+										meta_key = 'person_orderby_name') IS NULL)
+	*/
+	
+	public
+	
+		$name           = 'custom_post_type',
+		$plural_name    = 'Custom Posts',
+		$singular_name  = 'Custom Post',
+		$add_new_item   = 'Add New Custom Post',
+		$edit_item      = 'Edit Custom Post',
+		$new_item       = 'New Custom Post',
+		$public         = True,  # I dunno...leave it true
+		$use_title      = True,  # Title field
+		$use_editor     = False, # WYSIWYG editor, post content field
+		$use_revisions  = True,  # Revisions on post content and titles
+		$use_thumbnails = True,  # Featured images
+		$use_order      = False, # Wordpress built-in order meta data
+		$use_metabox    = True,  # Enable if you have custom fields to display in admin
+		$use_shortcode  = True,  # Auto generate a shortcode for the post type
+		                         # (see also objectsToHTML and toHTML methods)
+		$built_in       = False;
+		
+		public function fields(){
+			$fields = array(
+				array(
+					array(
+						'name'    => __('Title Prefix'),
+						'desc'    => '',
+						'id'      => $this->options('name').'_title_prefix',
+						'type'    => 'text',
+					),
+					array(
+						'name'    => __('Title Suffix'),
+						'desc'    => __('Be sure to include leading comma or space if neccessary.'),
+						'id'      => $this->options('name').'_title_suffix',
+						'type'    => 'text',
+					),
+					array(
+						'name'    => __('Job Title'),
+						'desc'    => __(''),
+						'id'      => $this->options('name').'_jobtitle',
+						'type'    => 'text',
+					),
+					array(
+						'name'    => __('Phone'),
+						'desc'    => __('Separate multiple entries with commas.'),
+						'id'      => $this->options('name').'_phones',
+						'type'    => 'text',
+					),
+				),
+				array(
+					array(
+						'name'    => __('Order By Name'),
+						'desc'    => __('Name used for sorting. Leaving this field blank may lead to an unexpected sort order.'),
+						'id'      => $this->options('name').'_orderby_name',
+						'type'    => 'text',
+					),
+					array(
+						'name'    => __('Email'),
+						'desc'    => __(''),
+						'id'      => $this->options('name').'_email',
+						'type'    => 'text',
+					),
+				)
+			);
+			return $fields;
+		}
+	
+} // END class 
+
+
 ?>

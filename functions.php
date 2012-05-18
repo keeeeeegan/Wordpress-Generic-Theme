@@ -38,7 +38,8 @@ Config::$custom_post_types = array(
 	'Document',
 	'Publication',
 	'Page',
-	'Person'
+	'Person',
+	'Graph'
 );
 
 Config::$custom_taxonomies = array(
