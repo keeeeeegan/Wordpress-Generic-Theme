@@ -662,37 +662,21 @@ class Person extends CustomPostType
 
 /**
  * Describes a graph
+ * Note that further field assignments are located in includes/rgraph.php
  *
  * @author Jo Greybill
  **/
 class Graph extends CustomPostType
 {
-	/*
-	The following query will pre-populate the person_orderby_name
-	meta field with a guess of the last name extracted from the post title.
-	
-	>>>BE SURE TO REPLACE wp_<number>_... WITH THE APPROPRIATE SITE ID<<<
-	
-	INSERT INTO wp_29_postmeta(post_id, meta_key, meta_value) 
-	(	SELECT	id AS post_id, 
-						'person_orderby_name' AS meta_key, 
-						REVERSE(SUBSTR(REVERSE(post_title), 1, LOCATE(' ', REVERSE(post_title)))) AS meta_value
-		FROM		wp_29_posts AS posts
-		WHERE		post_type = 'person' AND
-						(	SELECT meta_id 
-							FROM wp_29_postmeta 
-							WHERE post_id = posts.id AND
-										meta_key = 'person_orderby_name') IS NULL)
-	*/
 	
 	public
 	
-		$name           = 'custom_post_type',
-		$plural_name    = 'Custom Posts',
-		$singular_name  = 'Custom Post',
-		$add_new_item   = 'Add New Custom Post',
-		$edit_item      = 'Edit Custom Post',
-		$new_item       = 'New Custom Post',
+		$name           = 'graph',
+		$plural_name    = 'Graphs',
+		$singular_name  = 'Graph',
+		$add_new_item   = 'Add New Graph',
+		$edit_item      = 'Edit Graph',
+		$new_item       = 'New Graph',
 		$public         = True,  # I dunno...leave it true
 		$use_title      = True,  # Title field
 		$use_editor     = False, # WYSIWYG editor, post content field
@@ -703,53 +687,155 @@ class Graph extends CustomPostType
 		$use_shortcode  = True,  # Auto generate a shortcode for the post type
 		                         # (see also objectsToHTML and toHTML methods)
 		$built_in       = False;
+	
+	
+	
+// Chart field setup: //
 		
 		public function fields(){
-			$fields = array(
+			$prefix = $this->options('name').'_';
+			
+			return array(
 				array(
-					array(
-						'name'    => __('Title Prefix'),
-						'desc'    => '',
-						'id'      => $this->options('name').'_title_prefix',
-						'type'    => 'text',
-					),
-					array(
-						'name'    => __('Title Suffix'),
-						'desc'    => __('Be sure to include leading comma or space if neccessary.'),
-						'id'      => $this->options('name').'_title_suffix',
-						'type'    => 'text',
-					),
-					array(
-						'name'    => __('Job Title'),
-						'desc'    => __(''),
-						'id'      => $this->options('name').'_jobtitle',
-						'type'    => 'text',
-					),
-					array(
-						'name'    => __('Phone'),
-						'desc'    => __('Separate multiple entries with commas.'),
-						'id'      => $this->options('name').'_phones',
-						'type'    => 'text',
-					),
+					'name' => 'Graph Type',
+					'desc' => '',
+					'id'   => $prefix.'graphtype',
+					'type' => 'select',
+					'options' => array('Bar Graph' => 'bar', 'Line Graph' => 'line', 'Pie Graph' => 'pie'),
 				),
 				array(
-					array(
-						'name'    => __('Order By Name'),
-						'desc'    => __('Name used for sorting. Leaving this field blank may lead to an unexpected sort order.'),
-						'id'      => $this->options('name').'_orderby_name',
-						'type'    => 'text',
-					),
-					array(
-						'name'    => __('Email'),
-						'desc'    => __(''),
-						'id'      => $this->options('name').'_email',
-						'type'    => 'text',
-					),
-				)
+					'name'  => 'Canvas Dimensions',
+					'desc' => 'Specify the width and height of the graph canvas, separated by an "x"; e.g. "500x300"',
+					'id'   => $prefix.'dimensions',
+					'type' => 'text',
+				),
+				array(
+					'name' => 'Data',
+					'desc' => 'Type/paste your data in the textarea below.  Graphs can take a single set of data or grouped sets.  Separate groups with square brackets; e.g. "[1,6,7,12][2,9,8,10][5,6,7,8]"',
+					'id'   => $prefix.'data',
+					'type' => 'textarea',
+				),
+				array(
+					'name' => 'Data Labels',
+					'desc' => 'Specify labels for each grouped set of data.  These should be bracket-separated names, listed in the same order as their corresponding grouped sets of data; e.g. "[UCF][UF][FSU]"',
+					'id'   => $prefix.'datalabels',
+					'type' => 'text',
+				),
+				array(
+					'name' => 'Data Colors',
+					'desc' => 'Specify colors for the visual representations of each grouped set of data.  These should be bracket-separated color names, hex values, or rgb/rgba values, listed in the same order as their corresponding grouped sets of data; e.g. "[#ffc907][green][rgba(0,0,0,0.6)]"',
+					'id'   => $prefix.'datacolors',
+					'type' => 'text',
+				),
+				array(
+					'name' => 'Graph Animation',
+					'desc' => 'Select an animation method for the graph.  If you want the graph to generate without an animation, leave this blank.',
+					'id'   => $prefix.'animation',
+					'type' => 'select',
+					'options' =>  array('ALL GRAPH TYPES:' => 'empty',
+											'Canvas Fade In' 			=> 'Effects.Fade.In',
+											'Canvas Expand' 			=> 'Effects.jQuery.Expand',
+											'Canvas Reveal' 			=> 'Effects.jQuery.Reveal',
+											'Canvas Horizontal Blinds' 	=> 'Effects.jQuery.Blinds.Open',
+											'Canvas Vertical Blinds' 	=> 'Effects.jQuery.VBlinds.Open',
+											'    ' 						=> 'empty',
+										'BAR GRAPHS:' => 'empty', 
+											'Wave' 						=> 'Effects.Bar.Wave',
+											'Grow' 						=> 'Effects.Bar.Grow',
+											'   ' 						=> 'empty',	
+										'LINE GRAPHS:' => 'empty', 
+											'Unfold'					=> 'Effects.Line.Unfold',
+											'Unfold From Center'		=> 'Effects.Line.jQuery.UnfoldFromCenter',
+											'Trace, then Unfold'		=> 'Effects.Line.UnfoldFromCenterTrace',
+											'Trace'						=> 'Effects.Line.jQuery.Trace',
+											'  ' 						=> 'empty',	
+										'PIE GRAPHS:' => 'empty',
+											'Grow ' 					=> 'Effects.Pie.Grow',
+											'Implode' 					=> 'Effects.Pie.Implode',
+											'Round Robin'				=> 'Effects.Pie.RoundRobin'
+										),
+				),
+				array(
+					'name' => 'Graph Key/Legend',
+					'desc' => 'Specify whether the graph should include a key.  If this box is checked, the key will automatically generate a list of each Data Label, designated by their respective Data Colors.',
+					'id'   => $prefix.'key',
+					'type' => 'checkbox',
+				),
+				array(
+					'name' => 'Tooltips',
+					'desc' => 'Specify whether the graph should include tooltips, which appear when a data set is hovered over.  Tooltips will output the exact value of each individual piece of data.',
+					'id'   => $prefix.'tooltips',
+					'type' => 'checkbox',
+				),
+				array(
+					'name' => 'Title - Horizontal<br/>(Bar Graphs, Line Graphs)',
+					'desc' => 'This is the title for the graph\'s horizontal values.',
+					'id'   => $prefix.'graph_title_h',
+					'type' => 'text',
+				),
+				array(
+					'name' => 'Title - Vertical<br/>(Bar Graphs, Line Graphs)',
+					'desc' => 'This is the title for the graph\'s vertical values.',
+					'id'   => $prefix.'graph_title_v',
+					'type' => 'text',
+				),
+				array(
+					'name' => 'Labels - Horizontal<br/>(Bar Graphs, Line Graphs)',
+					'desc' => 'Specify the graph\'s set of horizontal labels in a bracket-separated list, listed from left-to-right on the graph; e.g. "[Jan][Feb][Mar][April][May][Jun]"',
+					'id'   => $prefix.'graph_labels_h',
+					'type' => 'textarea',
+				),
+				array(
+					'name' => 'Labels - Vertical<br/>(Bar Graphs, Line Graphs)',
+					'desc' => 'If you don\'t want to use a scale for vertical graph labels, specify them here in a bracket-separated list, listed from bottom-to-top on the graph; e.g. "[Low][Medium][High]".  If left blank, the graph will use the typical number scale.',
+					'id'   => $prefix.'graph_labels_v',
+					'type' => 'textarea',
+				),
+				array(
+					'name' => 'Grid Lines - Horizontal<br/>(Bar Graphs, Line Graphs)',
+					'desc' => 'Specify the number of horizontal grid lines that will appear in the chart\'s background.  Setting this value to "0" will display no horizontal lines.',
+					'id'   => $prefix.'graph_gridlines_h',
+					'type' => 'text',
+				),
+				array(
+					'name' => 'Grid Lines - Vertical<br/>(Bar Graphs, Line Graphs)',
+					'desc' => 'Specify the number of vertical grid lines that will appear in the chart\'s background.  Setting this value to "0" will display no horizontal lines.',
+					'id'   => $prefix.'graph_gridlines_v',
+					'type' => 'text',
+				),
+				array(
+					'name' => 'Toggle Off Graph Axes<br/>(Bar Graphs, Line Graphs)',
+					'desc' => 'Specify whether the graph uses horizontal and vertical axes.  If this box is checked, no horizontal or vertical axes will display on the graph.',
+					'id'   => $prefix.'graph_axes_off',
+					'type' => 'checkbox',
+				),
+				array(
+					'name' => 'Units of Measure - Pre-value<br/>(Bar Graphs, Line Graphs)',
+					'desc' => 'Designates the unit of measure for all graph values at the beginning of the value; e.g., setting this value to "$" will add a "$" to the beginning of each value in your graph, "$1, $6, $7, $12..."',
+					'id'   => $prefix.'units_pre',
+					'type' => 'text',
+				),
+				array(
+					'name' => 'Units of Measure - Post-value<br/>(Bar Graphs, Line Graphs)',
+					'desc' => 'Designates the unit of measure for all graph values at the end of the value; e.g., setting this value to "k" will add a "k" to the beginning of each value in your graph, "1k, 6k, 7k, 12k..."',
+					'id'   => $prefix.'units_post',
+					'type' => 'text',
+				),
 			);
 			return $fields;
 		}
-	
+		
+		public function register_metaboxes(){
+			$metabox = $this->metabox();
+			
+			global $wp_meta_boxes;
+			remove_meta_box('postimagediv', $metabox['page'], 'side');
+			add_meta_box('postimagediv', __('Fallback Graph Image'), 'post_thumbnail_meta_box', $metabox['page'], 'normal', 'high');
+			
+			parent::register_metaboxes();
+		}
+		
+		
 } // END class 
 
 
