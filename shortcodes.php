@@ -73,4 +73,32 @@ function sc_search_form() {
 	return ob_get_clean();
 }
 add_shortcode('search_form', 'sc_search_form');
+
+function rgraph_shortcode($attr, $content=null) {
+	$graphID = $attr['id'];
+	if ($graphID == '') { return ''; }
+	
+	$graph = get_post($graphID);
+	if (get_post_type($graph) !== 'graph') { return 'This post is not a graph!'; }
+	
+	$graph_dimensions = explode("x", strtolower(get_post_meta($graphID,'graph_dimensions',TRUE)));
+	$graph_w = $graph_dimensions[0];
+	$graph_h = $graph_dimensions[1];
+	
+	ob_start();
+	?>
+		<div class="rgraph_canvas_wrap" id="rgraph_wrap_<?=$graphID?>">
+			<canvas id="rgraph<?=$graphID?>" width="<?=$graph_w?>" height="<?=$graph_h?>">
+			<?php 
+			$fallback_img = get_the_post_thumbnail($graphID,array($graph_w,$graph_h)); 
+			if ($fallback_img) { ?>
+				<img src="<?=$fallback_img?>" />
+			<?php } ?>
+			</canvas>
+		</div>
+	<?php
+	return ob_get_clean();
+}
+add_shortcode('rgraph','rgraph_shortcode');
+
 ?>
