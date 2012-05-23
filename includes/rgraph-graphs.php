@@ -11,9 +11,6 @@
 //Search content for canvases:
 global $wp_query;
 
-//Set up empty $js variable for the classes to use to store javascript output:
-$js = "";
-
 //Create classes per type of graph:
 class SingleBarGraph {
 	public
@@ -40,11 +37,11 @@ class SingleBarGraph {
 		
 	}
 	
-	public function makeBarJS () {
-		$js .= "
-		";
+	public function writeBarJS() {
+		print "";
 	}
 }
+
 class SingleLineGraph {
 	public
 		$graphID 			= NULL,
@@ -70,14 +67,66 @@ class SingleLineGraph {
 		
 	}
 	
-	public function makeLineJS() {
-		$js .= "
-			var e_ucf = [27684,28685,30206,31673,33713,35850,38501,41535,42465,44856,47226,48897,50181,53472,56236,58587];
+	public function writeLineJS() {
+		print "
+			";
+	}
+}
+class SinglePieGraph {
+	public
+		$graphID 			= NULL,
+		$graphDimensions_w	= NULL,
+		$graphDimensions_h	= NULL,
+		$data				= array(),
+		$dataLabels			= array(),
+		$dataColors			= array(),
+		$animation			= NULL,
+		$key				= FALSE,
+		$tooltips			= FALSE;
+	
+	public function parsePieData() {
+		
+	}
+	
+	public function writePieJS() {
+		print "";
+	}
+}
+
+global $wp_query;
+$current_page = $wp_query->post->post_content;
+var_dump($current_page);
+
+if(preg_match('/rgraph id="[0-9]+/', $current_page, $graphs)) { //Can't find $post->content!
+	print "Match found";
+	foreach ($graphs as $graph) {
+		$graph = explode("id=\"", $graph);  //Explode the contents of $graph so we can get the ID
+		$graph = get_post($graph[1]);		//Use the ID as the post ID for get_post()
+		$graphType = get_post_meta($graph, 'graph_graphtype', TRUE);
+		switch($graphType) {
+			case 'bar':
+				$graph = new SingleBarGraph;
+				break;
+			case 'line':
+				$graph = new SingleLineGraph;
+				break;
+			case 'pie':
+				$graph = new SinglePieGraph;
+				break;
+		}
+	}
+
+	
+}
+else { print "No match"; }
+
+
+print "var e_ucf = [27684,28685,30206,31673,33713,35850,38501,41535,42465,44856,47226,48897,50181,53472,56236,58587];
 			var e_uf  = [39863,41713,42336,43382,45114,46515,47373,47858,47993,49693,50912,51725,51475,50691,49827,49589];
 			var e_usf = [36266,34036,33654,34839,35561,37221,38854,40945,42238,42660,41799,44869,46174,47122,49074,48574];
 			var e_fsu = [30154,30401,31071,32878,33971,34982,36210,36884,38431,39146,39973,40555,38717,39785,40416,41087];
 			var e_fiu = [29720,30012,30421,31293,31945,31727,33349,33228,34865,36904,38097,38290,34159,38208,40841,43831];
-            var line1 = new RGraph.Line('line1', e_fiu, e_fsu, e_usf, e_uf, e_ucf);
+            var rgraph142 = new RGraph.Line('rgraph142', e_fiu, e_fsu, e_usf, e_uf, e_ucf);
             rgraph142.Set('chart.background.grid', false);
             rgraph142.Set('chart.linewidth', 12);
             rgraph142.Set('chart.gutter.left', 70);
@@ -109,58 +158,11 @@ class SingleLineGraph {
 				} else {
 					$('canvas#rgraph142').unbind('inview');
 				}
-			});
-		";
-	}
-}
-class SinglePieGraph {
-	public
-		$graphID 			= NULL,
-		$graphDimensions_w	= NULL,
-		$graphDimensions_h	= NULL,
-		$data				= array(),
-		$dataLabels			= array(),
-		$dataColors			= array(),
-		$animation			= NULL,
-		$key				= FALSE,
-		$tooltips			= FALSE;
-	
-	public function parsePieData() {
-		
-	}
-	
-	public function makePieJS() {
-		
-	}
-}
+			});";
 
-if(preg_match('/rgraph id="[0-9]+$/', $post->content, $graphs)) {
-	
-	foreach ($graphs as $graph) {
-		$graph = explode("id=\"", $graph);  //Explode the contents of $graph so we can get the ID
-		$graph = get_post($graph[1]);		//Use the ID as the post ID for get_post()
-		$graphType = get_post_meta($graph, 'graph_graphtype', TRUE);
-		switch($graphType) {
-			case 'bar':
-				$graph = new SingleBarGraph;
-				break;
-			case 'line':
-				$graph = new SingleLineGraph;
-				break;
-			case 'pie':
-				$graph = new SinglePieGraph;
-				break;
-		}
-	}
 
-	
-}
-
-//$js = <<<JS
+//Set up empty $js variable for the classes to use to store javascript output:
 //
-//JS;
-
-header("Content-type: text/javascript");
-echo $js;
-exit();
+//header("Content-type: text/javascript");
+//exit();
 ?>
