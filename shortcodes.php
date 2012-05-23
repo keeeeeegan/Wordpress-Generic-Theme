@@ -87,7 +87,7 @@ function rgraph_shortcode($attr, $content=null) {
 	
 	ob_start();
 	?>
-		<div class="rgraph_canvas_wrap" id="rgraph_wrap_<?=$graphID?>">
+		<div class="rgraph_canvas_wrap" id="rgraph<?=$graphID?>_wrap">
 			<canvas id="rgraph<?=$graphID?>" width="<?=$graph_w?>" height="<?=$graph_h?>">
 			<?php 
 			$fallback_img = get_the_post_thumbnail($graphID,array($graph_w,$graph_h)); 
