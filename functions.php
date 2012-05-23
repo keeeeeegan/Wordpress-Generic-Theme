@@ -316,8 +316,9 @@ Config::$scripts = array(
 	'http://universityheader.ucf.edu/bar/js/university-header.js',
 	array('name' => 'jquery', 'src' => 'http://code.jquery.com/jquery-1.7.1.min.js',),
 	THEME_STATIC_URL.'/bootstrap/build/js/bootstrap.js',
-	array('name' => 'base-script',  'src' => THEME_JS_URL.'/webcom-base.js',),
+	array('name' => 'rgraph-common-core',  'src' => THEME_STATIC_URL.'/rgraph/libraries/rgraph.common.core.js',),
 	array('name' => 'rgraph-graphs-script',  'src' => THEME_INCLUDES_DIR.'/rgraph-graphs.php',),
+	array('name' => 'base-script',  'src' => THEME_JS_URL.'/webcom-base.js',),
 	array('name' => 'theme-script', 'src' => THEME_JS_URL.'/script.js',),
 );
 
