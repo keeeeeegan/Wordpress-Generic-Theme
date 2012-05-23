@@ -321,6 +321,7 @@ Config::$scripts = array(
 	array('name' => 'rgraph-line',  'src' => THEME_STATIC_URL.'/rgraph/libraries/rgraph.line.js',),
 	array('name' => 'rgraph-bar',  'src' => THEME_STATIC_URL.'/rgraph/libraries/rgraph.bar.js',),
 	array('name' => 'rgraph-pie',  'src' => THEME_STATIC_URL.'/rgraph/libraries/rgraph.pie.js',),
+	array('name' => 'rgraph-graphs',  'src' => THEME_INCLUDES_DIR.'/rgraph-js.js.php',),
 	array('name' => 'base-script',  'src' => THEME_JS_URL.'/webcom-base.js',),
 	array('name' => 'theme-script', 'src' => THEME_JS_URL.'/script.js',),
 );
