@@ -690,7 +690,7 @@ class Graph extends CustomPostType
 	
 	
 	
-// Chart field setup: //
+// Graph field setup: //
 		
 		public function fields(){
 			$prefix = $this->options('name').'_';
