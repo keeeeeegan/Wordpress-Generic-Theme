@@ -29,5 +29,5 @@
 	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
 	<?="\n".footer_()."\n"?>
-	<?php include_once(THEME_STATIC_URL.'/rgraph/rgraph-graphs.php') ?>
+	<?php include_once(THEME_INCLUDES_DIR.'/rgraph-graphs.php') ?>
 </html>

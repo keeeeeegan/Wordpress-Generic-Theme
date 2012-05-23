@@ -163,6 +163,14 @@ print "var e_ucf = [27684,28685,30206,31673,33713,35850,38501,41535,42465,44856,
 
 //Set up empty $js variable for the classes to use to store javascript output:
 //
-//header("Content-type: text/javascript");
-//exit();
+
+//Create a new Javascript document (replace if it already exists) and array_merge it into the main javascript parsing array 
+//Merge the new document as docname.js.php
+
+$rgraphJS = THEME_INCLUDES_DIR."/rgraph-js.js.php";
+$rgraphJSHandle = fopen($rgraphJS, 'w') or die("can't open file"); //If file exists, create it; otherwise write over what's already there.
+fwrite($rgraphJSHandle,'string data');
+fclose($rgraphJSHandle);
+
+
 ?>
