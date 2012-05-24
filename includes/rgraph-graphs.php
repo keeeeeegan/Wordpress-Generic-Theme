@@ -126,7 +126,7 @@ else { print "No match"; }
 
 $js = header('Content-type: text/javascript')."
 			var RGraph = {};
-			RGraph.loadGraphs = function() {
+			RGraph.loadGraphs = function($) {
 			
 				var e_ucf = [27684,28685,30206,31673,33713,35850,38501,41535,42465,44856,47226,48897,50181,53472,56236,58587];
 				var e_uf  = [39863,41713,42336,43382,45114,46515,47373,47858,47993,49693,50912,51725,51475,50691,49827,49589];
@@ -173,7 +173,7 @@ $js = header('Content-type: text/javascript')."
 //Create a new Javascript document (replace if it already exists) and array_push it into the main javascript parsing array 
 //Merge the new document as docname.js.php
 
-$rgraphJS = THEME_INCLUDES_DIR."/rgraph-js.js.php";
+$rgraphJS = THEME_INCLUDES_DIR."/rgraph-js.js";
 $rgraphJSHandle = fopen($rgraphJS, 'w') or die("can't open file"); //If file exists, create it; otherwise write over what's already there.
 fwrite($rgraphJSHandle, $js);
 fclose($rgraphJSHandle);
