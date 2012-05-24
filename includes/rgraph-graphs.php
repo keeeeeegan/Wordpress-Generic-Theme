@@ -30,7 +30,8 @@ class SingleGraph {
 		$gridLines_v		= NULL,
 		$axesOff			= FALSE,
 		$units_pre			= NULL,
-		$units_post			= NULL;
+		$units_post			= NULL,
+		$output				= NULL;
 	
 	public function parseData() {
 		//Data parsing:
@@ -55,9 +56,10 @@ class SingleGraph {
 				$labelV = "'".$labelV."',";	
 			}
 		}
+		$this->output = "Something";
 	}
 	
-	public function writeJS() {
+	static public function writeJS() {
 		$rgraphObject = "rgraph".$this->graphID;
 		
 		//Create new Graph object:
@@ -145,51 +147,68 @@ class SingleGraph {
 
 global $wp_query;
 $current_page = $wp_query->post->post_content;
+//Debug:
+print "Var dump of page content:  ";
 var_dump($current_page);
+print "<br/>";
 
 $all_graphs = array();
 
-if(preg_match('/rgraph id="[0-9]+/', $current_page, $graphs)) {
-	print "Match found";
-	foreach ($graphs as $graph) {
-		$graph = explode("id=\"", $graph);  //Explode the contents of $graph so we can get the ID
-		$graph = get_post($graph[1]);		//Use the ID as the post ID for get_post()
-		/*
-		$graphType = get_post_meta($graph, 'graph_graphtype', TRUE);
-		switch($graphType) {
-			case 'bar':
-				$graph = new SingleBarGraph;
-				array_push($all_graphs, $graph);
-				break;
-			case 'line':
-				$graph = new SingleLineGraph;
-				array_push($all_graphs, $graph);
-				break;
-			case 'pie':
-				$graph = new SinglePieGraph;
-				array_push($all_graphs, $graph);
-				break;
+preg_match_all('/[rgraph id="[0-9]+/', $current_page, $graphs);
+//Debug:
+print "Var dump of shortcode matches stored in $ graphs:  ";
+var_dump($graphs);
+print "<br /><br />";
+
+if (count($graphs) > 0) {
+	$j = 1;
+	foreach ($graphs as $graphShortcode) {
+		print "Shortcode match count: ".count($graphShortcode)."<br/>";
+		foreach ($graphShortcode as $graph) {
+			
+			
+			$graphPostID = explode("id=\"", $graph);  //Explode the contents of $graph so we can get the ID
+			$graphPostID = $graphPostID[1];
+			print "Graph ID: ".$graphPostID;
+			$graph = get_post($graphPostID);		//Use the ID as the post ID for get_post()
+			/*
+			$graphType = get_post_meta($graph, 'graph_graphtype', TRUE);
+			switch($graphType) {
+				case 'bar':
+					$graph = new SingleBarGraph;
+					array_push($all_graphs, $graph);
+					break;
+				case 'line':
+					$graph = new SingleLineGraph;
+					array_push($all_graphs, $graph);
+					break;
+				case 'pie':
+					$graph = new SinglePieGraph;
+					array_push($all_graphs, $graph);
+					break;
+			}
+			*/
+			$graphClass = new SingleGraph;
+			$graphClass->graphID 			= $graph->ID;
+			$graphClass->graphType			= get_post_meta($graphClass->graphID,'graph_graphtype',TRUE);
+			$graphClass->data				= explode("|",get_post_meta($graph->ID,'graph_data',TRUE));
+			$graphClass->dataLabels			= explode("|",get_post_meta($graph->ID,'graph_datalabels',TRUE));
+			$graphClass->dataColors			= explode("|",get_post_meta($graph->ID,'graph_datacolors',TRUE));
+			$graphClass->animation			= get_post_meta($graph->ID,'graph_animation',TRUE);
+			$graphClass->graphkey			= get_post_meta($graph->ID,'graph_key',TRUE);
+			$graphClass->tooltips			= get_post_meta($graph->ID,'graph_tooltips',TRUE);
+			$graphClass->title_h			= get_post_meta($graph->ID,'graph_title_h',TRUE);
+			$graphClass->title_v			= get_post_meta($graph->ID,'graph_title_v',TRUE);
+			$graphClass->labels_h			= explode("|",get_post_meta($graph->ID,'graph_labels_h',TRUE));
+			$graphClass->labels_v			= explode("|",get_post_meta($graph->ID,'graph_labels_v',TRUE));
+			$graphClass->gridLines_h		= get_post_meta($graph->ID,'graph_gridlines_h',TRUE);
+			$graphClass->gridLines_v		= get_post_meta($graph->ID,'graph_gridlines_v',TRUE);
+			$graphClass->axesOff			= get_post_meta($graph->ID,'graph_axes_off',TRUE);
+			$graphClass->units_pre			= get_post_meta($graph->ID,'graph_units_pre',TRUE);
+			$graphClass->units_post			= get_post_meta($graph->ID,'graph_units_post',TRUE);
+			array_push($all_graphs, $graphClass);
+			$j++;
 		}
-		*/
-		$graphClass = new SingleGraph;
-		$graphClass->graphID 			= $graph->ID;
-		$graphClass->graphType			= get_post_meta($graphClass->graphID,'graph_graphtype',TRUE);
-		$graphClass->data				= explode("|",get_post_meta($graph->ID,'graph_data',TRUE));
-		$graphClass->dataLabels			= explode("|",get_post_meta($graph->ID,'graph_datalabels',TRUE));
-		$graphClass->dataColors			= explode("|",get_post_meta($graph->ID,'graph_datacolors',TRUE));
-		$graphClass->animation			= get_post_meta($graph->ID,'graph_animation',TRUE);
-		$graphClass->graphkey			= get_post_meta($graph->ID,'graph_key',TRUE);
-		$graphClass->tooltips			= get_post_meta($graph->ID,'graph_tooltips',TRUE);
-		$graphClass->title_h			= get_post_meta($graph->ID,'graph_title_h',TRUE);
-		$graphClass->title_v			= get_post_meta($graph->ID,'graph_title_v',TRUE);
-		$graphClass->labels_h			= explode("|",get_post_meta($graph->ID,'graph_labels_h',TRUE));
-		$graphClass->labels_v			= explode("|",get_post_meta($graph->ID,'graph_labels_v',TRUE));
-		$graphClass->gridLines_h		= get_post_meta($graph->ID,'graph_gridlines_h',TRUE);
-		$graphClass->gridLines_v		= get_post_meta($graph->ID,'graph_gridlines_v',TRUE);
-		$graphClass->axesOff			= get_post_meta($graph->ID,'graph_axes_off',TRUE);
-		$graphClass->units_pre			= get_post_meta($graph->ID,'graph_units_pre',TRUE);
-		$graphClass->units_post			= get_post_meta($graph->ID,'graph_units_post',TRUE);
-		array_push($all_graphs, $graphClass);
 	}
 print_r($all_graphs);
 	
@@ -246,8 +265,10 @@ $js = header('Content-type: text/javascript')."
 				});
 				*/
 				
+
 				
-$js .= SingleGraph::writeJS();	
+foreach($all_graphs as $graph) {
+}
 				
 $js .=			"
 		});
@@ -261,14 +282,5 @@ $rgraphJS = THEME_INCLUDES_DIR."/rgraph-js.js";
 $rgraphJSHandle = fopen($rgraphJS, 'w') or die("can't open file"); //If file exists, create it; otherwise write over what's already there.
 fwrite($rgraphJSHandle, $js);
 fclose($rgraphJSHandle);
-
-//array_push(Config::$scripts, array('name' => 'rgraph-js', 'src' => THEME_URL.'/includes/rgraph-js.js.php'));
-/*function enqueueGraphScript() {
-	wp_register_script('rgraphJS', THEME_URL.'/includes/rgraph-js.js.php');
-	wp_enqueue_script('rgraphJS');	
-}
-add_action('wp_enqueue_scripts', 'enqueueGraphScript');
-*/
-//print "<script type='text/javascript' src='".THEME_URL."/includes/rgraph-js.js.php'></script>";
 
 ?>
