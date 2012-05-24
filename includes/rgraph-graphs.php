@@ -11,10 +11,11 @@
 //Search content for canvases:
 global $wp_query;
 
-//Create classes per type of graph:
-class SingleBarGraph {
+//Create class:
+class SingleGraph {
 	public
 		$graphID 			= NULL,
+		$graphType			= NULL,
 		$data				= array(),
 		$dataLabels			= array(),
 		$dataColors			= array(),
@@ -31,62 +32,7 @@ class SingleBarGraph {
 		$units_pre			= NULL,
 		$units_post			= NULL;
 	
-	public function __construct() {
-		$this->graphID			= $graph->ID;
-		$this->graphDimensions	= explode("x", strtolower(get_post_meta($graphID,'graph_dimensions',TRUE)));
-		$this->graphDimensions_w	= $graphDimensions[0];
-		$this->graphDimensions_h 	= $graphDimensions[1];
-		$this->data				= get_post_meta($graphID,'graph_data',TRUE);
-		$this->dataLabels			= get_post_meta($graphID,'graph_datalabels',TRUE);
-		$this->dataColors			= get_post_meta($graphID,'graph_datacolors',TRUE);
-	}
-	
-	public function writeBarJS() {
-		print "";
-	}
-}
-
-class SingleLineGraph {
-	public
-		$graphID 			= NULL,
-		$graphDimensions_w	= NULL,
-		$graphDimensions_h	= NULL,
-		$data				= array(),
-		$dataLabels			= array(),
-		$dataColors			= array(),
-		$animation			= NULL,
-		$graphkey			= FALSE,
-		$tooltips			= FALSE,
-		$title_h			= NULL,
-		$title_v			= NULL,
-		$labels_h			= array(),
-		$labels_v			= array(),
-		$gridLines_h		= NULL,
-		$gridLines_v		= NULL,
-		$axesOff			= FALSE,
-		$units_pre			= NULL,
-		$units_post			= NULL;
-		
-	public function __construct() {
-		$this->graphID				= $graph->ID;
-		$this->data					= explode("|",get_post_meta($graphID,'graph_data',TRUE));
-		$this->dataLabels			= explode("|",get_post_meta($graphID,'graph_datalabels',TRUE));
-		$this->dataColors			= explode("|",get_post_meta($graphID,'graph_datacolors',TRUE));
-		$this->animation			= get_post_meta($graphID,'graph_animation',TRUE);
-		$this->graphkey				= get_post_meta($graphID,'graph_key',TRUE);
-		$this->tooltips				= get_post_meta($graphID,'graph_tooltips',TRUE);
-		$this->title_h				= get_post_meta($graphID,'graph_title_h',TRUE);
-		$this->title_v				= get_post_meta($graphID,'graph_title_v',TRUE);
-		$this->labels_h				= explode("|",get_post_meta($graphID,'graph_labels_h',TRUE));;
-		$this->labels_v				= explode("|",get_post_meta($graphID,'graph_labels_v',TRUE));;
-		$this->gridLines_h			= get_post_meta($graphID,'graph_gridlines_h',TRUE);
-		$this->gridLines_v			= get_post_meta($graphID,'graph_gridlines_v',TRUE);
-		$this->axesOff				= get_post_meta($graphID,'graph_axes_off',TRUE);
-		$this->units_pre			= get_post_meta($graphID,'graph_units_pre',TRUE);
-		$this->units_post			= get_post_meta($graphID,'graph_units_post',TRUE);
-	}
-	
-	public function parseLineData() {
+	public function parseData() {
 		//Data parsing:
 		foreach ($this->data as $dataGroup) {
 			$dataGroup = "[".$dataGroup."],";
@@ -111,34 +57,29 @@ class SingleLineGraph {
 		}
 	}
 	
-	public function writeLineJS() {
+	public function writeJS() {
 		$rgraphObject = "rgraph".$this->graphID;
 		
 		//Create new Graph object:
 		
-		print "var ".$rgraphObject." = new RGraph.Line('".$rgraphObject."',";
+		print "var ".$rgraphObject." = new RGraph.".$this->graphType."('".$rgraphObject."',";
 		foreach ($this->data as $dataGroup) {
 			print $dataGroup;
 		}
 		print ");";
-		//var rgraphxxx = new RGraph.Line('rgraphxxx', [datagroup], [datagroup], ...);
+		//Prints var rgraphxxx = new RGraph.Line('rgraphxxx', [datagroup], [datagroup], ...);
 		
 		
 		//Set Graph parameters:
 		
-		print $rgraphObject.".Set('chart.labels', [";
-		foreach ($this->dataLabels as $dataLabel) {
-			print $dataLabel;	
-		}
-		print "]);";
-		// rgraphxxx.Set('chart.labels',['label1','label2'...]);
-		
+		//Colors
 		print $rgraphObject.".Set('chart.colors', [";
 		foreach ($this->dataColors as $dataColor) {
 			print $dataColor;	
 		}
 		print "]);";
 		
+		//Graph key
 		if ($this->graphkey == true) {
 			print $rgraphObject.".Set('chart.key', ";
 			foreach ($this->dataLabels as $dataLabel) {
@@ -149,32 +90,56 @@ class SingleLineGraph {
 		
 		//Add tooltips here --tooltips require an array of strings; need to re-format $this->data to output strings instead of numbers
 		
+		//Horizontal Title
 		if ($this->title_h) {
 			print $rgraphObject.".Set('chart.title.xaxis', ".$this->title_h.");";
 		}
-		
+		//Vertical Title
 		if ($this->title_v) {
-			print $rgraphObject.".Set('chart.title.xaxis', ".$this->title_v.");";
+			print $rgraphObject.".Set('chart.title.yaxis', ".$this->title_v.");";
 		}
-			
-	}
-}
-class SinglePieGraph {
-	public
-		$graphID 			= NULL,
-		$data				= array(),
-		$dataLabels			= array(),
-		$dataColors			= array(),
-		$animation			= NULL,
-		$graphkey			= FALSE,
-		$tooltips			= FALSE;
-	
-	public function __construct() {
+		//Horizontal Labels
+		print $rgraphObject.".Set('chart.labels', [";
+		foreach ($this->labels_h as $labelH) {
+			print $labelH;	
+		}
+		print "]);";
+		//Vertical Labels
+		if ($this->labels_v) {
+			print $rgraphObject.".Set('chart.ylabels.specific', ";
+			foreach ($this->labels_v as $labelV) {
+				print $labelV;	
+			}
+			print ");";
+		}
 		
-	}
-	
-	public function writePieJS() {
-		print "";
+		print $rgraphObject.".Set('chart.background.grid.autofit', true);";
+		
+		//Number of horizontal gridlines
+		if ($this->gridLines_h) {
+			print $rgraphObject.".Set('chart.background.grid.autofit.numhlines', ".$this->gridLines_h.");";
+		}
+		//Number of vertical gridlines
+		if ($this->gridLines_v) {
+			print $rgraphObject.".Set('chart.background.grid.autofit.numvlines', ".$this->gridLines_v.");";
+		}
+		//Axes on/off
+		if ($this->axesOff == true) {
+			print $rgraphObject.".Set('chart.noaxes', true)";
+		}
+		//Units (pre)
+		if ($this->units_pre) {
+			print $rgraphObject."Set('chart.units.pre', '".$this->units_pre."');";
+		}
+		//Units (post)
+		if ($this->units_post) {
+			print $rgraphObject."Set('chart.units.post', '".$this->units_post."');";
+		}
+		
+		//Draw method --Need to add case for animated draw methods!
+		
+		print $rgraphObject.".Draw();";
+			
 	}
 }
 
@@ -182,25 +147,51 @@ global $wp_query;
 $current_page = $wp_query->post->post_content;
 var_dump($current_page);
 
-if(preg_match('/rgraph id="[0-9]+/', $current_page, $graphs)) { //Can't find $post->content!
+$all_graphs = array();
+
+if(preg_match('/rgraph id="[0-9]+/', $current_page, $graphs)) {
 	print "Match found";
 	foreach ($graphs as $graph) {
 		$graph = explode("id=\"", $graph);  //Explode the contents of $graph so we can get the ID
 		$graph = get_post($graph[1]);		//Use the ID as the post ID for get_post()
+		/*
 		$graphType = get_post_meta($graph, 'graph_graphtype', TRUE);
 		switch($graphType) {
 			case 'bar':
 				$graph = new SingleBarGraph;
+				array_push($all_graphs, $graph);
 				break;
 			case 'line':
 				$graph = new SingleLineGraph;
+				array_push($all_graphs, $graph);
 				break;
 			case 'pie':
 				$graph = new SinglePieGraph;
+				array_push($all_graphs, $graph);
 				break;
 		}
+		*/
+		$graphClass = new SingleGraph;
+		$graphClass->graphID 			= $graph->ID;
+		$graphClass->graphType			= get_post_meta($graphClass->graphID,'graph_graphtype',TRUE);
+		$graphClass->data				= explode("|",get_post_meta($graph->ID,'graph_data',TRUE));
+		$graphClass->dataLabels			= explode("|",get_post_meta($graph->ID,'graph_datalabels',TRUE));
+		$graphClass->dataColors			= explode("|",get_post_meta($graph->ID,'graph_datacolors',TRUE));
+		$graphClass->animation			= get_post_meta($graph->ID,'graph_animation',TRUE);
+		$graphClass->graphkey			= get_post_meta($graph->ID,'graph_key',TRUE);
+		$graphClass->tooltips			= get_post_meta($graph->ID,'graph_tooltips',TRUE);
+		$graphClass->title_h			= get_post_meta($graph->ID,'graph_title_h',TRUE);
+		$graphClass->title_v			= get_post_meta($graph->ID,'graph_title_v',TRUE);
+		$graphClass->labels_h			= explode("|",get_post_meta($graph->ID,'graph_labels_h',TRUE));
+		$graphClass->labels_v			= explode("|",get_post_meta($graph->ID,'graph_labels_v',TRUE));
+		$graphClass->gridLines_h		= get_post_meta($graph->ID,'graph_gridlines_h',TRUE);
+		$graphClass->gridLines_v		= get_post_meta($graph->ID,'graph_gridlines_v',TRUE);
+		$graphClass->axesOff			= get_post_meta($graph->ID,'graph_axes_off',TRUE);
+		$graphClass->units_pre			= get_post_meta($graph->ID,'graph_units_pre',TRUE);
+		$graphClass->units_post			= get_post_meta($graph->ID,'graph_units_post',TRUE);
+		array_push($all_graphs, $graphClass);
 	}
-
+print_r($all_graphs);
 	
 }
 else { print "No match"; }
@@ -212,6 +203,8 @@ else { print "No match"; }
 $js = header('Content-type: text/javascript')."
 	if (typeof jQuery != 'undefined'){
 		jQuery(document).ready(function($) {
+			";
+			
 				/*
 				var e_ucf = [27684,28685,30206,31673,33713,35850,38501,41535,42465,44856,47226,48897,50181,53472,56236,58587];
 				var e_uf  = [39863,41713,42336,43382,45114,46515,47373,47858,47993,49693,50912,51725,51475,50691,49827,49589];
@@ -245,8 +238,8 @@ $js = header('Content-type: text/javascript')."
 				
 				$('canvas#rgraph142').bind('inview', function (event, visible) {
 					if (visible == true) {
-						RGraph.Effects.Line.jQuery.Trace(rgraph142); /* Line animation */
-						$('img#enrollment_gradient').delay(600).fadeIn(1100); /* Fade in the gradient fill afterward */
+						RGraph.Effects.Line.jQuery.Trace(rgraph142); 
+						$('img#enrollment_gradient').delay(600).fadeIn(1100); 
 					} else {
 						$('canvas#rgraph142').unbind('inview');
 					}
@@ -254,9 +247,9 @@ $js = header('Content-type: text/javascript')."
 				*/
 				
 				
+$js .= SingleGraph::writeJS();	
 				
-				
-			
+$js .=			"
 		});
 	}else{console.log('jQuery dependancy failed to load');}
 	";
