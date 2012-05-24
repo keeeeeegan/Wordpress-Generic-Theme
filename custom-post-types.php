@@ -701,7 +701,7 @@ class Graph extends CustomPostType
 					'desc' => '',
 					'id'   => $prefix.'graphtype',
 					'type' => 'select',
-					'options' => array('Bar Graph' => 'bar', 'Line Graph' => 'line', 'Pie Graph' => 'pie'),
+					'options' => array('Bar Graph' => 'Bar', 'Line Graph' => 'Line', 'Pie Graph' => 'Pie'),
 				),
 				array(
 					'name'  => 'Canvas Dimensions',
