@@ -711,19 +711,19 @@ class Graph extends CustomPostType
 				),
 				array(
 					'name' => 'Data',
-					'desc' => 'Type/paste your data in the textarea below.  Graphs can take a single set of data or grouped sets.  Separate groups with square brackets; e.g. "[1,6,7,12][2,9,8,10][5,6,7,8]"',
+					'desc' => 'Type/paste your data in the textarea below.  Graphs can take a single set of data or grouped sets.  Separate groups with a pipe character "|"; e.g. "1,6,7,12|2,9,8,10|5,6,7,8"',
 					'id'   => $prefix.'data',
 					'type' => 'textarea',
 				),
 				array(
 					'name' => 'Data Labels',
-					'desc' => 'Specify labels for each grouped set of data.  These should be bracket-separated names, listed in the same order as their corresponding grouped sets of data; e.g. "[UCF][UF][FSU]"',
+					'desc' => 'Specify labels for each grouped set of data.  These should be pipe-separated names ("|"), listed in the same order as their corresponding grouped sets of data; e.g. "UCF|UF|FSU"',
 					'id'   => $prefix.'datalabels',
 					'type' => 'text',
 				),
 				array(
 					'name' => 'Data Colors',
-					'desc' => 'Specify colors for the visual representations of each grouped set of data.  These should be bracket-separated color names, hex values, or rgb/rgba values, listed in the same order as their corresponding grouped sets of data; e.g. "[#ffc907][green][rgba(0,0,0,0.6)]"',
+					'desc' => 'Specify colors for the visual representations of each grouped set of data.  These should be pipe-separated ("|") color names, hex values, or rgb/rgba values, listed in the same order as their corresponding grouped sets of data; e.g. "#ffc907|green|rgba(0,0,0,0.6)"',
 					'id'   => $prefix.'datacolors',
 					'type' => 'text',
 				),
@@ -781,13 +781,13 @@ class Graph extends CustomPostType
 				),
 				array(
 					'name' => 'Labels - Horizontal<br/>(Bar Graphs, Line Graphs)',
-					'desc' => 'Specify the graph\'s set of horizontal labels in a bracket-separated list, listed from left-to-right on the graph; e.g. "[Jan][Feb][Mar][April][May][Jun]"',
+					'desc' => 'Specify the graph\'s set of horizontal labels in a pipe-separated ("|") list, listed from left-to-right on the graph; e.g. "Jan|Feb|Mar|April|May|Jun"',
 					'id'   => $prefix.'labels_h',
 					'type' => 'textarea',
 				),
 				array(
 					'name' => 'Labels - Vertical<br/>(Bar Graphs, Line Graphs)',
-					'desc' => 'If you don\'t want to use a scale for vertical graph labels, specify them here in a bracket-separated list, listed from bottom-to-top on the graph; e.g. "[Low][Medium][High]".  If left blank, the graph will use the typical number scale.',
+					'desc' => 'If you don\'t want to use a scale for vertical graph labels, specify them here in a pipe-separated ("|") list, listed from bottom-to-top on the graph; e.g. "Low|Medium|High".  If left blank, the graph will use the typical number scale.',
 					'id'   => $prefix.'labels_v',
 					'type' => 'textarea',
 				),
