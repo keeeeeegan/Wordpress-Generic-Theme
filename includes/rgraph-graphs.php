@@ -125,8 +125,8 @@ else { print "No match"; }
 //
 
 $js = header('Content-type: text/javascript')."
-			var RGraph = {};
-			RGraph.loadGraphs = function($) {
+	if (typeof jQuery != 'undefined'){
+		jQuery(document).ready(function($) {
 			
 				var e_ucf = [27684,28685,30206,31673,33713,35850,38501,41535,42465,44856,47226,48897,50181,53472,56236,58587];
 				var e_uf  = [39863,41713,42336,43382,45114,46515,47373,47858,47993,49693,50912,51725,51475,50691,49827,49589];
@@ -167,7 +167,8 @@ $js = header('Content-type: text/javascript')."
 					}
 				});
 			
-			};
+		});
+	}else{console.log('jQuery dependancy failed to load');}
 	";
 
 //Create a new Javascript document (replace if it already exists) and array_push it into the main javascript parsing array 
