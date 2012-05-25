@@ -157,9 +157,26 @@ foreach ($all_graphs as $object) {
 		$labelString .= "]);";
 		$labelString = str_replace(",]);", "]);", $labelString);
 		$results .= $labelString."\n";
+		//We're also turning on key interactivity for Line graphs and Pie graphs if the key itself is activated
+		if ($object->graphType == "Line" | $object->graphType == "Pie") {
+			$results .= $rgraphObject.".Set('chart.key.interactive', true); \n";
+			$results .= $rgraphObject.".Set('chart.key.position', 'graph'); \n";
+		}
 	}
 		
 	//Add tooltips here --tooltips require an array of strings; need to re-format $object->data to output strings instead of numbers
+	if ($object->tooltips) {
+		$results .= $rgraphObject.".Set('chart.tooltips', ";
+		$tooltipString = "['";
+		foreach ($object->data as $dataGroup) {
+			$dataGroup = str_replace(",","','",$dataGroup);
+			$tooltipString .= $dataGroup;
+		}
+		$tooltipString .= "]);";
+		$tooltipString = str_replace(",]);", "]);", $tooltipString);
+		$tooltipString = str_replace("]);", "']);", $tooltipString);
+		$results .= $tooltipString."\n";
+	}
 		
 	//Horizontal Title
 	if ($object->title_h) {
