@@ -134,11 +134,14 @@ foreach ($all_graphs as $object) {
 		
 	//Colors
 	if ($object->dataColors[0]) {
-		$results .= $rgraphObject.".Set('chart.colors', [";
-		foreach ($object->dataColors as $dataColor) {
-			$results .= $dataColor;	
+		$results .= $rgraphObject.".Set('chart.colors', ";
+		$colorString = "[";
+		foreach ($object->dataColors as $color) {
+			$colorString .= "'".$color."',";
 		}
-		$results .= "]); \n";
+		$colorString .= "]);";
+		$colorString = str_replace(",]);", "]);", $colorString);
+		$results .= $colorString."\n";
 	}
 	
 	//Graph key
@@ -147,10 +150,9 @@ foreach ($all_graphs as $object) {
 		$labelString = "[";
 		foreach ($object->dataLabels as $dataLabel) {
 			if ($dataLabel) {
-				$dataLabel = "'".$dataLabel."',";	
-				$labelString .= $dataLabel;
+				$labelString .= "'".$dataLabel."',";
 			}
-			else { $results .= ""; }
+			else { $labelString .= ""; }
 		}
 		$labelString .= "]);";
 		$labelString = str_replace(",]);", "]);", $labelString);
