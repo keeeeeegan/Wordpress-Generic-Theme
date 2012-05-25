@@ -22,6 +22,7 @@ class SingleGraph {
 		$animation			= NULL,
 		$graphkey			= FALSE,
 		$tooltips			= FALSE,
+		$tickmarks			= FALSE,
 		$title_h			= NULL,
 		$title_v			= NULL,
 		$labels_h			= array(),
@@ -72,6 +73,7 @@ if (count($graphs) > 0) {
 			$graphClass->animation			= get_post_meta($graph->ID,'graph_animation',TRUE);
 			$graphClass->graphkey			= get_post_meta($graph->ID,'graph_key',TRUE);
 			$graphClass->tooltips			= get_post_meta($graph->ID,'graph_tooltips',TRUE);
+			$graphClass->tickmarks			= get_post_meta($graph->ID,'graph_tickmarks',TRUE);
 			$graphClass->title_h			= get_post_meta($graph->ID,'graph_title_h',TRUE);
 			$graphClass->title_v			= get_post_meta($graph->ID,'graph_title_v',TRUE);
 			$graphClass->labels_h			= explode("|",get_post_meta($graph->ID,'graph_labels_h',TRUE));
@@ -177,6 +179,11 @@ foreach ($all_graphs as $object) {
 		$tooltipString = str_replace(",]);", "]);", $tooltipString); //Remove stray commas from end of list
 		$results .= $tooltipString."\n";
 	}
+	
+	//Add tickmarks for line graphs only
+	if ($object->graphType == "Line" && $object->tickmarks) {
+		$results .= $rgraphObject.".Set('chart.tickmarks', 'circle'); \n";
+	}
 		
 	//Horizontal Title
 	if ($object->title_h) {
@@ -221,11 +228,21 @@ foreach ($all_graphs as $object) {
 	
 	//Number of horizontal gridlines
 	if ($object->gridLines_h) {
-		$results .= $rgraphObject.".Set('chart.background.grid.autofit.numhlines', ".$object->gridLines_h."); \n";
+		if ($object->gridLines_h == "none") {
+			$results .= $rgraphObject.".Set('chart.background.grid.autofit.numhlines', 0); \n";
+		}
+		else {
+			$results .= $rgraphObject.".Set('chart.background.grid.autofit.numhlines', ".$object->gridLines_v."); \n";
+		}
 	}
 	//Number of vertical gridlines
 	if ($object->gridLines_v) {
-		$results .= $rgraphObject.".Set('chart.background.grid.autofit.numvlines', ".$object->gridLines_v."); \n";
+		if ($object->gridLines_v == "none") {
+			$results .= $rgraphObject.".Set('chart.background.grid.autofit.numvlines', 0); \n";
+		}
+		else {
+			$results .= $rgraphObject.".Set('chart.background.grid.autofit.numvlines', ".$object->gridLines_v."); \n";
+		}
 	}
 	//Axes on/off
 	if ($object->axesOff == true) {
