@@ -153,6 +153,12 @@ foreach ($all_graphs as $object) {
 			
 		
 	//Set Graph parameters:
+	
+	//Basic gutter defaults to prevent label cut-off
+	$results .= $rgraphObject.".Set('chart.gutter.top', 50);";
+	$results .= $rgraphObject.".Set('chart.gutter.right', 20);";
+	$results .= $rgraphObject.".Set('chart.gutter.bottom', 50);";
+	$results .= $rgraphObject.".Set('chart.gutter.left', 80);";
 		
 	//Colors
 	if ($object->dataColors[0]) {
