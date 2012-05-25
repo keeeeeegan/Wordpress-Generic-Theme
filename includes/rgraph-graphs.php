@@ -16,6 +16,10 @@ class SingleGraph {
 	public
 		$graphID 			= NULL,
 		$graphType			= NULL,
+		$gutter_t			= NULL,
+		$gutter_r			= NULL,
+		$gutter_b			= NULL,
+		$gutter_l			= NULL,
 		$data				= array(),
 		$dataLabels			= array(),
 		$dataColors			= array(),
@@ -68,6 +72,10 @@ if (count($graphs) > 0) {
 			$graphClass = new SingleGraph;
 			$graphClass->graphID 			= $graph->ID;
 			$graphClass->graphType			= get_post_meta($graphClass->graphID,'graph_graphtype',TRUE);
+			$graphClass->gutter_t			= get_post_meta($graphClass->graphID,'graph_gutter_top',TRUE);
+			$graphClass->gutter_r			= get_post_meta($graphClass->graphID,'graph_gutter_right',TRUE);
+			$graphClass->gutter_b			= get_post_meta($graphClass->graphID,'graph_gutter_bottom',TRUE);
+			$graphClass->gutter_l			= get_post_meta($graphClass->graphID,'graph_gutter_left',TRUE);
 			$graphClass->data				= explode("|",get_post_meta($graph->ID,'graph_data',TRUE));
 			$graphClass->dataLabels			= explode("|",get_post_meta($graph->ID,'graph_datalabels',TRUE));
 			$graphClass->dataColors			= explode("|",get_post_meta($graph->ID,'graph_datacolors',TRUE));
@@ -187,7 +195,6 @@ foreach ($all_graphs as $object) {
 	if ($object->graphType == "Line" && $object->tickmarks) {
 		$results .= $rgraphObject.".Set('chart.tickmarks', 'circle'); \n";
 	}
-		
 	//Add line width for line graphs only	
 	if ($object->graphType == "Line" && $object->lineWidth) {
 		$results .= $rgraphObject.".Set('chart.linewidth', ".$object->lineWidth."); \n";

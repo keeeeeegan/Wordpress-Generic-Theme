@@ -710,6 +710,30 @@ class Graph extends CustomPostType
 					'type' => 'text',
 				),
 				array(
+					'name'  => 'Canvas Gutter - Top',
+					'desc' => 'Specify the top gutter for your graph, in pixels; e.g. "50".  Gutters are essentially padding for the canvas and will push against the graph and its labels, titles, and key (if it exists), shrinking the graph down in the process.  Specifying a gutter is beneficial particularly when you have long labels that stretch past the point of the canvas.',
+					'id'   => $prefix.'gutter_top',
+					'type' => 'text',
+				),
+				array(
+					'name'  => 'Canvas Gutter - Right',
+					'desc' => 'Specify the top gutter for your graph, in pixels; e.g. "50"',
+					'id'   => $prefix.'gutter_right',
+					'type' => 'text',
+				),
+				array(
+					'name'  => 'Canvas Gutter - Bottom',
+					'desc' => 'Specify the top gutter for your graph, in pixels; e.g. "50"',
+					'id'   => $prefix.'gutter_bottom',
+					'type' => 'text',
+				),
+				array(
+					'name'  => 'Canvas Gutter - Left',
+					'desc' => 'Specify the top gutter for your graph, in pixels; e.g. "50"',
+					'id'   => $prefix.'gutter_left',
+					'type' => 'text',
+				),
+				array(
 					'name' => 'Data',
 					'desc' => 'Type/paste your data in the textarea below.  Graphs can take a single set of data or grouped sets.  Separate groups with a pipe character "|"; e.g. "1,6,7,12|2,9,8,10|5,6,7,8"',
 					'id'   => $prefix.'data',
