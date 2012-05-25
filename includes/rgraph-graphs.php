@@ -160,7 +160,6 @@ foreach ($all_graphs as $object) {
 		//We're also turning on key interactivity for Line graphs and Pie graphs if the key itself is activated
 		if ($object->graphType == "Line" | $object->graphType == "Pie") {
 			$results .= $rgraphObject.".Set('chart.key.interactive', true); \n";
-			$results .= $rgraphObject.".Set('chart.key.position', 'graph'); \n";
 		}
 	}
 		
@@ -170,11 +169,12 @@ foreach ($all_graphs as $object) {
 		$tooltipString = "['";
 		foreach ($object->data as $dataGroup) {
 			$dataGroup = str_replace(",","','",$dataGroup);
-			$tooltipString .= $dataGroup;
+			$tooltipString .= $dataGroup."','";
 		}
 		$tooltipString .= "]);";
-		$tooltipString = str_replace(",]);", "]);", $tooltipString);
-		$tooltipString = str_replace("]);", "']);", $tooltipString);
+		$tooltipString = str_replace("]);", "']);", $tooltipString); //Make sure the list ends with an apostrophe
+		$tooltipString = str_replace("''", "", $tooltipString);		 //Remove any empty sets of data
+		$tooltipString = str_replace(",]);", "]);", $tooltipString); //Remove stray commas from end of list
 		$results .= $tooltipString."\n";
 	}
 		
