@@ -170,18 +170,20 @@ foreach ($all_graphs as $object) {
 	}
 	
 	//Graph key
-	$results .= $rgraphObject.".Set('chart.key', ";
-	$labelString = "[";
-	foreach ($object->dataLabels as $dataLabel) {
-		if ($dataLabel) {
-			$dataLabel = "'".$dataLabel."',";	
-			$labelString .= $dataLabel;
+	if ($object->graphkey) {
+		$results .= $rgraphObject.".Set('chart.key', ";
+		$labelString = "[";
+		foreach ($object->dataLabels as $dataLabel) {
+			if ($dataLabel) {
+				$dataLabel = "'".$dataLabel."',";	
+				$labelString .= $dataLabel;
+			}
+			else { $results .= ""; }
 		}
-		else { $results .= ""; }
+		$labelString .= "]);";
+		$labelString = str_replace(",]);", "]);", $labelString);
+		$results .= $labelString."\n";
 	}
-	$labelString .= "]);";
-	$labelString = str_replace(",]);", "]);", $labelString);
-	$results .= $labelString."\n";
 		
 	//Add tooltips here --tooltips require an array of strings; need to re-format $object->data to output strings instead of numbers
 		
