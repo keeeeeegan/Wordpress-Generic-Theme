@@ -768,6 +768,12 @@ class Graph extends CustomPostType
 					'type' => 'checkbox',
 				),
 				array(
+					'name' => 'Add Data Tickmarks<br/>(Line Graphs only)',
+					'desc' => 'Specify whether the graph should display a dot over each piece of data in a group.  This is beneficial particularly for graphs that implement tooltips for easier access to the data\'s hover state.',
+					'id'   => $prefix.'tickmarks',
+					'type' => 'checkbox',
+				),
+				array(
 					'name' => 'Title - Horizontal<br/>(Bar Graphs, Line Graphs)',
 					'desc' => 'This is the title for the graph\'s horizontal values.',
 					'id'   => $prefix.'title_h',
