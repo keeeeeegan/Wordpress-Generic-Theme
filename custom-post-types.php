@@ -787,7 +787,7 @@ class Graph extends CustomPostType
 				),
 				array(
 					'name' => 'Labels - Vertical<br/>(Bar Graphs, Line Graphs)',
-					'desc' => 'If you don\'t want to use a scale for vertical graph labels, specify them here in a pipe-separated ("|") list, listed from bottom-to-top on the graph; e.g. "Low|Medium|High".  If left blank, the graph will use the typical number scale.',
+					'desc' => 'If you don\'t want to use a scale for vertical graph labels, specify them here in a pipe-separated ("|") list, listed from top-to-bottom on the graph; e.g. "High|Medium|Low".  If left blank, the graph will use the typical number scale.  Units of measure will not be used in vertical labels specified here.',
 					'id'   => $prefix.'labels_v',
 					'type' => 'textarea',
 				),
