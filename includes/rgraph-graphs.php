@@ -32,36 +32,7 @@ class SingleGraph {
 		$units_pre			= NULL,
 		$units_post			= NULL;
 	
-	public function parseData() {
-		//Data parsing:
-		if (count($this->data) ===1) { 
-			$this->data = "[".'$this->data'."]";
-		}
-		else {
-			foreach ($this->data as $dataGroup) {
-				$dataGroup = "[".'$dataGroup'."],";
-			}
-		}
-		
-		//Label parsing:
-		foreach ($this->dataLabels as $dataLabel) {
-			$dataLabel = "'".$dataLabel."',";	
-		}
-		//Color parsing:
-		foreach ($this->dataColors as $dataColor) {
-			$dataColor = "'".$dataColor."',";	
-		}
-		//Horizontal Label parsing:
-		foreach ($this->labels_h as $labelH) {
-			$labelH = "'".$labelH."',";	
-		}
-		//Vertical Label parsing:
-		foreach ($this->labels_v as $labelV) {
-			if (count($labelV) > 1) {
-				$labelV = "'".$labelV."',";	
-			}
-		}
-	}
+	
 }
 
 global $wp_query; 		//Necessary call to retrieve the current post's content
@@ -116,7 +87,7 @@ if (count($graphs) > 0) {
 	}
 	
 	//Debugging output:
-	/*
+	
 	print "all_graphs contents, after foreach loop: ";
 	print_r($all_graphs);
 	print "<br/><br/>";
@@ -126,7 +97,7 @@ if (count($graphs) > 0) {
 		print $object->tooltips."<br/>";
 		print "Data group count:  ".count($object->data)."<br/>";
 	}
-	*/
+	
 }
 /*else { print "No match"; }*/
 
@@ -154,11 +125,12 @@ foreach ($all_graphs as $object) {
 		
 	//Set Graph parameters:
 	
-	//Basic gutter defaults to prevent label cut-off
-	$results .= $rgraphObject.".Set('chart.gutter.top', 50);";
-	$results .= $rgraphObject.".Set('chart.gutter.right', 20);";
-	$results .= $rgraphObject.".Set('chart.gutter.bottom', 50);";
-	$results .= $rgraphObject.".Set('chart.gutter.left', 80);";
+	//Basic default values
+	$results .= $rgraphObject.".Set('chart.gutter.top', 50); \n";
+	$results .= $rgraphObject.".Set('chart.gutter.right', 20); \n";
+	$results .= $rgraphObject.".Set('chart.gutter.bottom', 50); \n";
+	$results .= $rgraphObject.".Set('chart.gutter.left', 80); \n";
+	$results .= $rgraphObject.".Set('chart.text.font', 'Helvetica'); \n \n";
 		
 	//Colors
 	if ($object->dataColors[0]) {
@@ -189,25 +161,41 @@ foreach ($all_graphs as $object) {
 		
 	//Horizontal Title
 	if ($object->title_h) {
-		$results .= $rgraphObject.".Set('chart.title.xaxis', ".$object->title_h."); \n";
+		$results .= $rgraphObject.".Set('chart.title.xaxis', '".$object->title_h."'); \n";
 	}
 	//Vertical Title
 	if ($object->title_v) {
-		$results .= $rgraphObject.".Set('chart.title.yaxis', ".$object->title_v."); \n";
+		$results .= $rgraphObject.".Set('chart.title.yaxis', '".$object->title_v."'); \n";
 	}
 	//Horizontal Labels
-	$results .= $rgraphObject.".Set('chart.labels', [";
-	foreach ($object->labels_h as $labelH) {
-		$results .= $labelH;	
-	}
-	$results .= "]); \n";
-	//Vertical Labels
-	if ($object->labels_v[0]) {
-		$results .= $rgraphObject.".Set('chart.ylabels.specific', ";
-		foreach ($object->labels_v as $labelV) {
-			$results .= $labelV;
+	$results .= $rgraphObject.".Set('chart.labels', ";
+	$labelHString = "[";
+	if ($object->graphType !== "Pie") {
+		foreach ($object->labels_h as $labelH) {
+			$labelHString .= "'".$labelH."',";	
 		}
-		$results .= "); \n";
+		$labelHString .= "]);";
+		$labelHString = str_replace(",]);", "]);", $labelHString);
+		$results .= $labelHString."\n";
+	}
+	else { //Need to use data labels for Pie charts:
+		foreach ($object->dataLabels as $dataLabel) {
+			$labelHString .= "'".$dataLabel."',";	
+		}
+		$labelHString .= "]);";
+		$labelHString = str_replace(",]);", "]);", $labelHString);
+		$results .= $labelHString."\n";
+	}
+	//Vertical Labels
+	if ($object->labels_v) {
+		$labelVString = "";
+		$results .= $rgraphObject.".Set('chart.ylabels.specific', [";
+		foreach ($object->labels_v as $labelV) {
+			$labelVString .= "'".$labelV."',";	
+		}
+		$labelVString .= "]);";
+		$labelVString = str_replace(",]);", "]);", $labelVString);
+		$results .= $labelVString."\n";
 	}
 	
 	$results .= $rgraphObject.".Set('chart.background.grid.autofit', true); \n";
@@ -234,7 +222,7 @@ foreach ($all_graphs as $object) {
 	}
 	
 	//Draw method --Need to add case for animated draw methods!
-	$results .= $rgraphObject.".Draw(); \n";
+	$results .= $rgraphObject.".Draw(); \n \n";
 }
 
 $results .= "}); }else{console.log('jQuery dependency failed to load for RGraph execution');} ";
