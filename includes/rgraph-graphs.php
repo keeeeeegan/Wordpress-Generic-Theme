@@ -28,6 +28,8 @@ class SingleGraph {
 		$tooltips			= FALSE,
 		$tickmarks			= FALSE,
 		$lineWidth			= NULL,
+		$title_pos_h		= NULL,
+		$title_pos_v		= NULL,
 		$title_h			= NULL,
 		$title_v			= NULL,
 		$labels_h			= array(),
@@ -86,6 +88,8 @@ if (count($graphs) > 0) {
 			$graphClass->tickmarks			= get_post_meta($graph->ID,'graph_tickmarks',TRUE);
 			$graphClass->title_h			= get_post_meta($graph->ID,'graph_title_h',TRUE);
 			$graphClass->title_v			= get_post_meta($graph->ID,'graph_title_v',TRUE);
+			$graphClass->title_pos_h		= get_post_meta($graph->ID,'graph_title_pos_h',TRUE);
+			$graphClass->title_pos_v		= get_post_meta($graph->ID,'graph_title_pos_v',TRUE);
 			$graphClass->labels_h			= explode("|",get_post_meta($graph->ID,'graph_labels_h',TRUE));
 			$graphClass->labels_v			= explode("|",get_post_meta($graph->ID,'graph_labels_v',TRUE));
 			$graphClass->gridLines_h		= get_post_meta($graph->ID,'graph_gridlines_h',TRUE);
@@ -189,7 +193,7 @@ foreach ($all_graphs as $object) {
 	//Add tooltips here --tooltips require an array of strings; need to re-format $object->data to output strings instead of numbers
 	if ($object->tooltips) {
 		$results .= $rgraphObject.".Set('chart.tooltips', ";
-		$tooltipString = "['";
+		$tooltipString = "['";			
 		foreach ($object->data as $dataGroup) {
 			$dataGroup = str_replace(",","','",$dataGroup);
 			$tooltipString .= $dataGroup."','";
@@ -218,6 +222,16 @@ foreach ($all_graphs as $object) {
 	if ($object->title_v) {
 		$results .= $rgraphObject.".Set('chart.title.yaxis', '".$object->title_v."'); \n";
 	}
+	
+	//Horizontal Title Positioning
+	if ($object->title_pos_h) {
+		$results .= $rgraphObject.".Set('chart.title.hpos', '".$object->title_pos_h."'); \n";
+	}
+	//Vertical Title Positioning
+	if ($object->title_pos_v) {
+		$results .= $rgraphObject.".Set('chart.title.vpos', '".$object->title_pos_v."'); \n";
+	}
+	
 	//Horizontal Labels
 	$results .= $rgraphObject.".Set('chart.labels', ";
 	$labelHString = "[";

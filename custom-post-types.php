@@ -816,6 +816,18 @@ class Graph extends CustomPostType
 					'type' => 'text',
 				),
 				array(
+					'name' => 'Title Positioning - Horizontal<br/>(Bar Graphs, Line Graphs)',
+					'desc' => 'If necessary, specify a specific position for the horizontal title.  Enter a number between 0 and 1; this number is multiplied with the whole width of the graph canvas and is then used as the horizontal position.',
+					'id'   => $prefix.'title_pos_h',
+					'type' => 'text',
+				),
+				array(
+					'name' => 'Title Positioning - Vertical<br/>(Bar Graphs, Line Graphs)',
+					'desc' => 'If necessary, specify a specific position for the vertical title.  Enter a number between 0 and 1; this number is multiplied with the gutter and is then used as the vertical position.  This is particularly useful if your vertical labels are long and overlap your vertical title.',
+					'id'   => $prefix.'title_pos_v',
+					'type' => 'text',
+				),
+				array(
 					'name' => 'Labels - Horizontal<br/>(Bar Graphs, Line Graphs)',
 					'desc' => 'Specify the graph\'s set of horizontal labels in a pipe-separated ("|") list, listed from left-to-right on the graph; e.g. "Jan|Feb|Mar|April|May|Jun"',
 					'id'   => $prefix.'labels_h',
