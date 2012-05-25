@@ -717,19 +717,19 @@ class Graph extends CustomPostType
 				),
 				array(
 					'name'  => 'Canvas Gutter - Right',
-					'desc' => 'Specify the top gutter for your graph, in pixels; e.g. "50"',
+					'desc' => 'Specify the right-hand gutter for your graph, in pixels; e.g. "50"',
 					'id'   => $prefix.'gutter_right',
 					'type' => 'text',
 				),
 				array(
 					'name'  => 'Canvas Gutter - Bottom',
-					'desc' => 'Specify the top gutter for your graph, in pixels; e.g. "50"',
+					'desc' => 'Specify the bottom gutter for your graph, in pixels; e.g. "50"',
 					'id'   => $prefix.'gutter_bottom',
 					'type' => 'text',
 				),
 				array(
 					'name'  => 'Canvas Gutter - Left',
-					'desc' => 'Specify the top gutter for your graph, in pixels; e.g. "50"',
+					'desc' => 'Specify the left-hand gutter for your graph, in pixels; e.g. "50"',
 					'id'   => $prefix.'gutter_left',
 					'type' => 'text',
 				),

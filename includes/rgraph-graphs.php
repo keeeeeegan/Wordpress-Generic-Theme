@@ -138,12 +138,22 @@ foreach ($all_graphs as $object) {
 	//Set Graph parameters:
 	
 	//Basic default values
-	$results .= $rgraphObject.".Set('chart.gutter.top', 50); \n";
-	$results .= $rgraphObject.".Set('chart.gutter.right', 20); \n";
-	$results .= $rgraphObject.".Set('chart.gutter.bottom', 50); \n";
-	$results .= $rgraphObject.".Set('chart.gutter.left', 80); \n";
 	$results .= $rgraphObject.".Set('chart.background.grid.autofit', true); \n";
 	$results .= $rgraphObject.".Set('chart.text.font', 'Helvetica'); \n \n";
+		
+	//Gutters
+	if ($object->gutter_t) {
+		$results .= $rgraphObject.".Set('chart.gutter.top', ".$object->gutter_t."); \n";
+	}
+	if ($object->gutter_r) {
+		$results .= $rgraphObject.".Set('chart.gutter.right', ".$object->gutter_r."); \n";
+	}
+	if ($object->gutter_b) {
+		$results .= $rgraphObject.".Set('chart.gutter.bottom', ".$object->gutter_b."); \n";
+	}
+	if ($object->gutter_l) {
+		$results .= $rgraphObject.".Set('chart.gutter.left', ".$object->gutter_l."); \n";
+	}
 		
 	//Colors
 	if ($object->dataColors[0]) {
