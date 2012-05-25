@@ -86,11 +86,11 @@ print "<br /><br />";
 if (count($graphs) > 0) {
 	$j = 1;
 	foreach ($graphs as $graphShortcode) {
-		print "Shortcode match count: ".count($graphShortcode)."<br/>";
+		/*print "Shortcode match count: ".count($graphShortcode)."<br/>";*/
 		foreach ($graphShortcode as $graph) {
 			$graphPostID = explode("id=\"", $graph);  //Explode the contents of $graph so we can get the ID
 			$graphPostID = $graphPostID[1];
-			print "Graph ID: ".$graphPostID.",<br/>";
+			/*print "Graph ID: ".$graphPostID.",<br/>";*/
 			$graph = get_post($graphPostID);		//Use the ID as the post ID for get_post()
 			$graphClass = new SingleGraph;
 			$graphClass->graphID 			= $graph->ID;
