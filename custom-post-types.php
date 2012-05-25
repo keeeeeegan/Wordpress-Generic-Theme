@@ -774,6 +774,12 @@ class Graph extends CustomPostType
 					'type' => 'checkbox',
 				),
 				array(
+					'name' => 'Line Width<br/>(Line Graphs only)',
+					'desc' => 'Specify the width of all lines on the line graph.',
+					'id'   => $prefix.'line_width',
+					'type' => 'text',
+				),
+				array(
 					'name' => 'Title - Horizontal<br/>(Bar Graphs, Line Graphs)',
 					'desc' => 'This is the title for the graph\'s horizontal values.',
 					'id'   => $prefix.'title_h',

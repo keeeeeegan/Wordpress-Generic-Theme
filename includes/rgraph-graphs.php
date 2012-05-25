@@ -23,6 +23,7 @@ class SingleGraph {
 		$graphkey			= FALSE,
 		$tooltips			= FALSE,
 		$tickmarks			= FALSE,
+		$lineWidth			= NULL,
 		$title_h			= NULL,
 		$title_v			= NULL,
 		$labels_h			= array(),
@@ -73,6 +74,7 @@ if (count($graphs) > 0) {
 			$graphClass->animation			= get_post_meta($graph->ID,'graph_animation',TRUE);
 			$graphClass->graphkey			= get_post_meta($graph->ID,'graph_key',TRUE);
 			$graphClass->tooltips			= get_post_meta($graph->ID,'graph_tooltips',TRUE);
+			$graphClass->lineWidth			= get_post_meta($graph->ID,'graph_line_width',TRUE);
 			$graphClass->tickmarks			= get_post_meta($graph->ID,'graph_tickmarks',TRUE);
 			$graphClass->title_h			= get_post_meta($graph->ID,'graph_title_h',TRUE);
 			$graphClass->title_v			= get_post_meta($graph->ID,'graph_title_v',TRUE);
@@ -132,6 +134,7 @@ foreach ($all_graphs as $object) {
 	$results .= $rgraphObject.".Set('chart.gutter.right', 20); \n";
 	$results .= $rgraphObject.".Set('chart.gutter.bottom', 50); \n";
 	$results .= $rgraphObject.".Set('chart.gutter.left', 80); \n";
+	$results .= $rgraphObject.".Set('chart.background.grid.autofit', true); \n";
 	$results .= $rgraphObject.".Set('chart.text.font', 'Helvetica'); \n \n";
 		
 	//Colors
@@ -185,6 +188,11 @@ foreach ($all_graphs as $object) {
 		$results .= $rgraphObject.".Set('chart.tickmarks', 'circle'); \n";
 	}
 		
+	//Add line width for line graphs only	
+	if ($object->graphType == "Line" && $object->lineWidth) {
+		$results .= $rgraphObject.".Set('chart.linewidth', ".$object->lineWidth."); \n";
+	}
+		
 	//Horizontal Title
 	if ($object->title_h) {
 		$results .= $rgraphObject.".Set('chart.title.xaxis', '".$object->title_h."'); \n";
@@ -213,7 +221,7 @@ foreach ($all_graphs as $object) {
 		$results .= $labelHString."\n";
 	}
 	//Vertical Labels
-	if ($object->labels_v) {
+	if ($object->labels_v[0]) {
 		$labelVString = "";
 		$results .= $rgraphObject.".Set('chart.ylabels.specific', [";
 		foreach ($object->labels_v as $labelV) {
@@ -223,8 +231,6 @@ foreach ($all_graphs as $object) {
 		$labelVString = str_replace(",]);", "]);", $labelVString);
 		$results .= $labelVString."\n";
 	}
-	
-	$results .= $rgraphObject.".Set('chart.background.grid.autofit', true); \n";
 	
 	//Number of horizontal gridlines
 	if ($object->gridLines_h) {
