@@ -1,10 +1,10 @@
 <?php
-//  0:  Create new classes 'SingleBar/Line/PieGraph' and set up default parameters
+//  0:  Create new classes 'SingleGraph' and set up default parameters
 //  1:  Check for any canvas elements on the page with an id starting with "rgraph",
 //		explode each name and remove the "rgraph" portion of the name,
-//		then re-store these elements (now the Post ID) as new SingleBar/Line/PieGraph objects.  
+//		then re-store these elements (now the Post ID) as new SingleGraph objects.  
 //		We'll use the Post ID to retrieve chart data for each chart.
-//  2:  For each SingleBar/Line/PieGraph object, set up and output the necessary javascript
+//  2:  For each SingleGraph object, set up and output the necessary javascript
 //		for the chart to work correctly.
 
 
@@ -64,20 +64,24 @@ class SingleGraph {
 	}
 }
 
-global $wp_query;
+global $wp_query; 		//Necessary call to retrieve the current post's content
+$all_graphs = array(); 	//Start an empty array for storing SingleGraph instances
 $current_page = $wp_query->post->post_content;
+preg_match_all('/[rgraph id="[0-9]+/', $current_page, $graphs);	 //Search for shortcode output within the page's content
+
 //Debug:
+/*
 print "Var dump of page content:  ";
 var_dump($current_page);
 print "<br/>";
+*/
 
-$all_graphs = array();
-
-preg_match_all('/[rgraph id="[0-9]+/', $current_page, $graphs);
 //Debug:
+/*
 print "Var dump of shortcode matches stored in $ graphs:  ";
 var_dump($graphs);
 print "<br /><br />";
+*/
 
 if (count($graphs) > 0) {
 	$j = 1;
@@ -110,7 +114,9 @@ if (count($graphs) > 0) {
 			$j++;
 		}
 	}
-	//Debug:
+	
+	//Debugging output:
+	/*
 	print "all_graphs contents, after foreach loop: ";
 	print_r($all_graphs);
 	print "<br/><br/>";
@@ -120,8 +126,9 @@ if (count($graphs) > 0) {
 		print $object->tooltips."<br/>";
 		print "Data group count:  ".count($object->data)."<br/>";
 	}
+	*/
 }
-else { print "No match"; }
+/*else { print "No match"; }*/
 
 
 //Begin javascript output:
@@ -222,7 +229,7 @@ foreach ($all_graphs as $object) {
 	$results .= $rgraphObject.".Draw(); \n";
 }
 
-$results .= "}); }else{console.log('jQuery dependancy failed to load');} ";
+$results .= "}); }else{console.log('jQuery dependency failed to load for RGraph execution');} ";
 
 
 //Create a new Javascript document (replace if it already exists) and array_push it into the main javascript parsing array
