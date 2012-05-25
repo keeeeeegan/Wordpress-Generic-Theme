@@ -225,11 +225,17 @@ foreach ($all_graphs as $object) {
 	
 	//Horizontal Title Positioning
 	if ($object->title_pos_h) {
-		$results .= $rgraphObject.".Set('chart.title.hpos', '".$object->title_pos_h."'); \n";
+		if ($object->graphType == "Line") { //Apparently lines use a different designation for horizontal/vertical title positioning
+			$results .= $rgraphObject.".Set('chart.title.xaxis.pos', ".$object->title_pos_h."); \n";
+		}
+		else { $results .= $rgraphObject.".Set('chart.title.hpos', ".$object->title_pos_h."); \n"; }
 	}
 	//Vertical Title Positioning
 	if ($object->title_pos_v) {
-		$results .= $rgraphObject.".Set('chart.title.vpos', '".$object->title_pos_v."'); \n";
+		if ($object->graphType == "Line") {
+			$results .= $rgraphObject.".Set('chart.title.yaxis.pos', ".$object->title_pos_v."); \n";
+		}
+		else { $results .= $rgraphObject.".Set('chart.title.vpos', ".$object->title_pos_v."); \n"; }
 	}
 	
 	//Horizontal Labels
