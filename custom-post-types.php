@@ -799,13 +799,13 @@ class Graph extends CustomPostType
 				),
 				array(
 					'name' => 'Grid Lines - Horizontal<br/>(Bar Graphs, Line Graphs)',
-					'desc' => 'Specify the number of horizontal grid lines that will appear in the chart\'s background.  Setting this value to "0" will display no horizontal lines.',
+					'desc' => 'Specify the number of horizontal grid lines that will appear in the chart\'s background.  Setting this value to "none" will display no horizontal lines.',
 					'id'   => $prefix.'gridlines_h',
 					'type' => 'text',
 				),
 				array(
 					'name' => 'Grid Lines - Vertical<br/>(Bar Graphs, Line Graphs)',
-					'desc' => 'Specify the number of vertical grid lines that will appear in the chart\'s background.  Setting this value to "0" will display no horizontal lines.',
+					'desc' => 'Specify the number of vertical grid lines that will appear in the chart\'s background.  Setting this value to "none" will display no horizontal lines.',
 					'id'   => $prefix.'gridlines_v',
 					'type' => 'text',
 				),
