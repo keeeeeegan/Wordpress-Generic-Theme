@@ -735,7 +735,7 @@ class Graph extends CustomPostType
 				),
 				array(
 					'name' => 'Data',
-					'desc' => 'Type/paste your data in the textarea below.  Graphs can take a single set of data or grouped sets.  Separate groups with a pipe character "|"; e.g. "1,6,7,12|2,9,8,10|5,6,7,8"',
+					'desc' => 'Type/paste your data in the textarea below.  Individual pieces of data should be separated by commas.  Do not add commas to designate thousands/ten-thousands/etc; these will be added to your data automatically.  Graphs can take a single set of data or grouped sets.  Separate groups with a pipe character "|"; e.g. "1,6,7,12|2,9,8,10|5,6,7,8"',
 					'id'   => $prefix.'data',
 					'type' => 'textarea',
 				),
