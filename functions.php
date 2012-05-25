@@ -318,6 +318,7 @@ Config::$scripts = array(
 	THEME_STATIC_URL.'/bootstrap/build/js/bootstrap.js',
 	THEME_STATIC_URL.'/rgraph/libraries/RGraph.common.effects.js',
 	THEME_STATIC_URL.'/rgraph/libraries/RGraph.common.core.js',
+	THEME_STATIC_URL.'/rgraph/libraries/RGraph.common.dynamic.js',
 	THEME_STATIC_URL.'/rgraph/libraries/RGraph.common.tooltips.js',
 	THEME_STATIC_URL.'/rgraph/libraries/RGraph.common.key.js',
 	THEME_STATIC_URL.'/rgraph/libraries/RGraph.line.js',
