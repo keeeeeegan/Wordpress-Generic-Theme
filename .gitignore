@@ -21,3 +21,6 @@ CVS
 ._*
 .DS_Store
 Thumbs.db
+
+# Ignore the dynamically-generated rgraphs-js.js
+includes/rgraph-js.js
