@@ -15,7 +15,9 @@ global $wp_query;
 class SingleGraph {
 	public
 		$graphID 			= NULL,
+		$graphTitle			= NULL,
 		$graphType			= NULL,
+		$graphTitleOff		= NULL,
 		$gutter_t			= NULL,
 		$gutter_r			= NULL,
 		$gutter_b			= NULL,
@@ -73,7 +75,9 @@ if (count($graphs) > 0) {
 			$graph = get_post($graphPostID);		//Use the ID as the post ID for get_post()
 			$graphClass = new SingleGraph;
 			$graphClass->graphID 			= $graph->ID;
+			$graphClass->graphTitle			= get_the_title($graphClass->graphID);
 			$graphClass->graphType			= get_post_meta($graphClass->graphID,'graph_graphtype',TRUE);
+			$graphClass->graphTitleOff		= get_post_meta($graphClass->graphID,'graph_graphtitle_off',TRUE);
 			$graphClass->gutter_t			= get_post_meta($graphClass->graphID,'graph_gutter_top',TRUE);
 			$graphClass->gutter_r			= get_post_meta($graphClass->graphID,'graph_gutter_right',TRUE);
 			$graphClass->gutter_b			= get_post_meta($graphClass->graphID,'graph_gutter_bottom',TRUE);
@@ -157,6 +161,11 @@ foreach ($all_graphs as $object) {
 	}
 	if ($object->gutter_l) {
 		$results .= $rgraphObject.".Set('chart.gutter.left', ".$object->gutter_l."); \n";
+	}
+	
+	//Main chart title
+	if ($object->graphTitleOff == NULL) {
+		$results .= $rgraphObject.".Set('chart.title', '".$object->graphTitle."'); \n";
 	}
 		
 	//Colors

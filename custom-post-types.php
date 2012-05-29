@@ -662,7 +662,6 @@ class Person extends CustomPostType
 
 /**
  * Describes a graph
- * Note that further field assignments are located in includes/rgraph.php
  *
  * @author Jo Greybill
  **/
@@ -702,6 +701,12 @@ class Graph extends CustomPostType
 					'id'   => $prefix.'graphtype',
 					'type' => 'select',
 					'options' => array('Bar Graph' => 'Bar', 'Line Graph' => 'Line', 'Pie Graph' => 'Pie'),
+				),
+				array(
+					'name' => 'Display Graph Title (turn OFF)',
+					'desc' => 'Check this box if you want to remove the graph\'s title from the top of the graph.',
+					'id'   => $prefix.'graphtitle_off',
+					'type' => 'checkbox',
 				),
 				array(
 					'name'  => 'Canvas Dimensions',
