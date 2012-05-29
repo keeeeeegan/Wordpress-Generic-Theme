@@ -773,6 +773,7 @@ class Graph extends CustomPostType
 											'Trace'						=> 'Effects.Line.jQuery.Trace',
 											'  ' 						=> 'empty',	
 										'PIE GRAPHS:' => 'empty',
+											'Wave ' 					=> 'Effects.Pie.Wave',
 											'Grow ' 					=> 'Effects.Pie.Grow',
 											'Implode' 					=> 'Effects.Pie.Implode',
 											'Round Robin'				=> 'Effects.Pie.RoundRobin'
