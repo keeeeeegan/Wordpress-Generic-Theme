@@ -25,6 +25,7 @@ class SingleGraph {
 		$dataLabels			= array(),
 		$dataColors			= array(),
 		$animation			= NULL,
+		$animation_onLoad	= FALSE,
 		$graphkey			= FALSE,
 		$tooltips			= FALSE,
 		$tickmarks			= FALSE,
@@ -86,6 +87,7 @@ if (count($graphs) > 0) {
 			$graphClass->dataLabels			= explode("|",get_post_meta($graph->ID,'graph_datalabels',TRUE));
 			$graphClass->dataColors			= explode("|",get_post_meta($graph->ID,'graph_datacolors',TRUE));
 			$graphClass->animation			= get_post_meta($graph->ID,'graph_animation',TRUE);
+			$graphClass->animation_onLoad	= get_post_meta($graph->ID,'graph_animation_onload',TRUE);
 			$graphClass->graphkey			= get_post_meta($graph->ID,'graph_key',TRUE);
 			$graphClass->tooltips			= get_post_meta($graph->ID,'graph_tooltips',TRUE);
 			$graphClass->lineWidth			= get_post_meta($graph->ID,'graph_line_width',TRUE);
@@ -217,7 +219,7 @@ foreach ($all_graphs as $object) {
 		}
 	}
 		
-	//Add tooltips here --tooltips require an array of strings; need to re-format $object->data to output strings instead of numbers
+	//Tooltips
 	if ($object->tooltips) {
 		$results .= $rgraphObject.".Set('chart.tooltips', ";
 		$tooltipString = "['";			
@@ -318,8 +320,22 @@ foreach ($all_graphs as $object) {
 		$results .= $rgraphObject.".Set('chart.units.post', '".$object->units_post."'); \n";
 	}
 	
-	//Draw method --Need to add case for animated draw methods!
-	$results .= $rgraphObject.".Draw(); \n \n";
+	//Draw method
+	if ($object->animation && $object->animation !== "empty") {
+		if ($object->animation_onLoad == true) {
+			$results .= $rgraphObject.".Set('RGraph.', '".$object->animation."'); \n";
+		}
+		else {
+			$results .= "$('canvas#".$rgraphObject."').bind('inview', function (event, visible) {
+							if (visible == true) { 
+								".$rgraphObject.".Set('RGraph.', '".$object->animation."'); \n 
+							} else { 
+								$('".$rgraphObject."').unbind('inview'); 
+							}
+						});";
+		}
+	}
+	else { $results .= $rgraphObject.".Draw(); \n \n"; }
 }
 
 $results .= "}); }else{console.log('jQuery dependency failed to load for RGraph execution');} ";

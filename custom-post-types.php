@@ -779,6 +779,12 @@ class Graph extends CustomPostType
 										),
 				),
 				array(
+					'name' => 'Start Graph Animation Immediately',
+					'desc' => 'Check this box to force this graph to begin animation as soon as the page has loaded.  Checking this box is particularly useful if the graph is above the fold and visible before the user scrolls down.  Otherwise, the graph will only animate as soon as the page has been scrolled and the graph is visible on the screen.',
+					'id'   => $prefix.'animation_onload',
+					'type' => 'checkbox',
+				),
+				array(
 					'name' => 'Graph Key/Legend',
 					'desc' => 'Specify whether the graph should include a key.  If this box is checked, the key will automatically generate a list of each Data Label, designated by their respective Data Colors.',
 					'id'   => $prefix.'key',
