@@ -317,6 +317,7 @@ Config::$scripts = array(
 	array('name' => 'jquery', 'src' => 'http://code.jquery.com/jquery-1.7.1.min.js',),
 	THEME_STATIC_URL.'/bootstrap/build/js/bootstrap.js',
 	THEME_STATIC_URL.'/rgraph/build/rgraph.compressed.js',
+	THEME_STATIC_URL.'/rgraph/excanvas/excanvas.compiled.js',
 	THEME_STATIC_URL.'/rgraph/libraries/inview.js',
 	array('name' => 'rgraph-graphs',  'src' => THEME_URL.'/includes/rgraph-js.js',),
 	array('name' => 'base-script',  'src' => THEME_JS_URL.'/webcom-base.js',),

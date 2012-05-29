@@ -296,11 +296,7 @@ foreach ($all_graphs as $object) {
 	else { $results .= $rgraphObject.".Draw(); \n \n"; }
 	
 	//Generate a fallback image and display it if a featured image for the graph hasn't already been set
-	$results .= "if ($('canvas#".$rgraphObject." img')) { } else {
-		var graphimgurl = ".$rgraphObject.".toDataURL();
-		alert(graphimgurl);
-	}
-	";
+	
 }
 $results .= "}); }else{console.log('jQuery dependency failed to load for RGraph execution');} ";
 
