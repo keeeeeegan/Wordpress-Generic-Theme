@@ -810,7 +810,7 @@ class Graph extends CustomPostType
 				),
 				array(
 					'name' => 'Graph Title Vertical Positioning',
-					'desc' => 'If necessary, specify a vertical position for the main graph\'s title (assuming the Display Graph Title checkbox above is not checked.)  Enter a number between 0 and 1; the number is then multiplied with the gutter and then used as the vertical position.',
+					'desc' => 'If necessary, specify a vertical position for the main graph\'s title (assuming the Display Graph Title checkbox above is not checked.)  Enter a number between 0 and 1; the number is then multiplied with the gutter and then used as the vertical position.  As a rule of thumb, values closer to 0 will push the title closer to the top of the graph; values closer to 1 will push it farther away.',
 					'id'   => $prefix.'graphtitle_pos_v',
 					'type' => 'text',
 				),
@@ -828,13 +828,13 @@ class Graph extends CustomPostType
 				),
 				array(
 					'name' => 'Title Positioning - Horizontal<br/>(Bar Graphs, Line Graphs)',
-					'desc' => 'If necessary, specify a specific position for the horizontal title.  Enter a number between 0 and 1; this number is multiplied with the whole width of the graph canvas and is then used as the horizontal position.',
+					'desc' => 'If necessary, specify a specific position for the horizontal title.  Enter a number between 0 and 1; this number is multiplied with the whole width of the graph canvas and is then used as the horizontal position.  As a rule of thumb, values closer to 0 will push the title closer to the horizontal axis; values closer to 1 will push it farther away.',
 					'id'   => $prefix.'title_pos_h',
 					'type' => 'text',
 				),
 				array(
 					'name' => 'Title Positioning - Vertical<br/>(Bar Graphs, Line Graphs)',
-					'desc' => 'If necessary, specify a specific position for the vertical title.  Enter a number between 0 and 1; this number is multiplied with the gutter and is then used as the vertical position.  This is particularly useful if your vertical labels are long and overlap your vertical title.',
+					'desc' => 'If necessary, specify a specific position for the vertical title.  Enter a number between 0 and 1; this number is multiplied with the gutter and is then used as the vertical position.  As a rule of thumb, values closer to 0 will push the title closer to the vertical axis; values closer to 1 will push it farther away.  Changing this is particularly useful if your vertical labels are long and overlap your vertical title.',
 					'id'   => $prefix.'title_pos_v',
 					'type' => 'text',
 				),
