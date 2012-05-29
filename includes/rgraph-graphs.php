@@ -48,7 +48,7 @@ class SingleGraph {
 global $wp_query; 		//Necessary call to retrieve the current post's content
 $all_graphs = array(); 	//Start an empty array for storing SingleGraph instances
 $current_page = $wp_query->post->post_content;
-preg_match_all('/[rgraph id="[0-9]+/', $current_page, $graphs);	 //Search for shortcode output within the page's content
+preg_match_all('/\[rgraph id="[0-9]+/', $current_page, $graphs);	 //Search for shortcode output within the page's content
 
 if (count($graphs) > 0) {
 	$j = 1;
@@ -96,7 +96,7 @@ if (count($graphs) > 0) {
 
 //2:  Begin javascript output
 
-$results = header('Content-type: text/javascript')."
+$results = "
 	if (typeof jQuery != 'undefined'){
 		jQuery(document).ready(function($) {
 			";
