@@ -1,17 +1,14 @@
 <?php
-//  0:  Create new classes 'SingleGraph' and set up default parameters
+//  0:  Create new class 'SingleGraph' and set up default parameters
 //  1:  Check for any canvas elements on the page with an id starting with "rgraph",
 //		explode each name and remove the "rgraph" portion of the name,
-//		then re-store these elements (now the Post ID) as new SingleGraph objects.  
-//		We'll use the Post ID to retrieve chart data for each chart.
+//		then re-store these elements (now the Post ID) as new SingleGraph objects.
+//		We'll use the Post ID to retrieve chart data/parameters for each chart.
 //  2:  For each SingleGraph object, set up and output the necessary javascript
-//		for the chart to work correctly.
+//		for the chart to output correctly.
 
+//0:  Create class 'SingleGraph'
 
-//Search content for canvases:
-global $wp_query;
-
-//Create class:
 class SingleGraph {
 	public
 		$graphID 			= NULL,
@@ -43,37 +40,22 @@ class SingleGraph {
 		$axesOff			= FALSE,
 		$units_pre			= NULL,
 		$units_post			= NULL;
-	
-	
 }
+
+
+//1:  Get page content, search for graphs and make new SingleGraph instances.
 
 global $wp_query; 		//Necessary call to retrieve the current post's content
 $all_graphs = array(); 	//Start an empty array for storing SingleGraph instances
 $current_page = $wp_query->post->post_content;
 preg_match_all('/[rgraph id="[0-9]+/', $current_page, $graphs);	 //Search for shortcode output within the page's content
 
-//Debug:
-/*
-print "Var dump of page content:  ";
-var_dump($current_page);
-print "<br/>";
-*/
-
-//Debug:
-/*
-print "Var dump of shortcode matches stored in $ graphs:  ";
-var_dump($graphs);
-print "<br /><br />";
-*/
-
 if (count($graphs) > 0) {
 	$j = 1;
 	foreach ($graphs as $graphShortcode) {
-		/*print "Shortcode match count: ".count($graphShortcode)."<br/>";*/
 		foreach ($graphShortcode as $graph) {
 			$graphPostID = explode("id=\"", $graph);  //Explode the contents of $graph so we can get the ID
 			$graphPostID = $graphPostID[1];
-			/*print "Graph ID: ".$graphPostID.",<br/>";*/
 			$graph = get_post($graphPostID);		//Use the ID as the post ID for get_post()
 			$graphClass = new SingleGraph;
 			$graphClass->graphID 			= $graph->ID;
@@ -109,24 +91,11 @@ if (count($graphs) > 0) {
 			$j++;
 		}
 	}
-	
-	//Debugging output:
-	
-	print "all_graphs contents, after foreach loop: ";
-	print_r($all_graphs);
-	print "<br/><br/>";
-	print "Retrieval of all_graphs objects from array: ";
-	foreach($all_graphs as $object) {
-		print $object->graphType."<br/>";
-		print $object->tooltips."<br/>";
-		print "Data group count:  ".count($object->data)."<br/>";
-	}
-	
 }
-/*else { print "No match"; }*/
 
 
-//Begin javascript output:
+//2:  Begin javascript output
+
 $results = header('Content-type: text/javascript')."
 	if (typeof jQuery != 'undefined'){
 		jQuery(document).ready(function($) {
@@ -235,13 +204,10 @@ foreach ($all_graphs as $object) {
 	}
 	
 	//Add tickmarks for line graphs only
-	if ($object->graphType == "Line" && $object->tickmarks) {
-		$results .= $rgraphObject.".Set('chart.tickmarks', 'circle'); \n";
-	}
+	if ($object->graphType == "Line" && $object->tickmarks) { $results .= $rgraphObject.".Set('chart.tickmarks', 'circle'); \n"; }
+	
 	//Add line width for line graphs only	
-	if ($object->graphType == "Line" && $object->lineWidth) {
-		$results .= $rgraphObject.".Set('chart.linewidth', ".$object->lineWidth."); \n";
-	}
+	if ($object->graphType == "Line" && $object->lineWidth) { $results .= $rgraphObject.".Set('chart.linewidth', ".$object->lineWidth."); \n"; }
 		
 	//Horizontal Title and positioning
 	if ($object->title_h) {
@@ -294,33 +260,25 @@ foreach ($all_graphs as $object) {
 		if ($object->gridLines_h == "none") {
 			$results .= $rgraphObject.".Set('chart.background.grid.autofit.numhlines', 0); \n";
 		}
-		else {
-			$results .= $rgraphObject.".Set('chart.background.grid.autofit.numhlines', ".$object->gridLines_v."); \n";
-		}
+		else { $results .= $rgraphObject.".Set('chart.background.grid.autofit.numhlines', ".$object->gridLines_v."); \n"; }
 	}
 	//Number of vertical gridlines
 	if ($object->gridLines_v) {
 		if ($object->gridLines_v == "none") {
 			$results .= $rgraphObject.".Set('chart.background.grid.autofit.numvlines', 0); \n";
 		}
-		else {
-			$results .= $rgraphObject.".Set('chart.background.grid.autofit.numvlines', ".$object->gridLines_v."); \n";
-		}
+		else { $results .= $rgraphObject.".Set('chart.background.grid.autofit.numvlines', ".$object->gridLines_v."); \n"; }
 	}
 	//Axes on/off
-	if ($object->axesOff == true) {
-		$results .= $rgraphObject.".Set('chart.noaxes', true); \n";
-	}
-	//Units (pre)
-	if ($object->units_pre) {
-		$results .= $rgraphObject.".Set('chart.units.pre', '".$object->units_pre."'); \n";
-	}
-	//Units (post)
-	if ($object->units_post) {
-		$results .= $rgraphObject.".Set('chart.units.post', '".$object->units_post."'); \n";
-	}
+	if ($object->axesOff == true) { $results .= $rgraphObject.".Set('chart.noaxes', true); \n"; }
 	
-	//Draw method
+	//Units (pre)
+	if ($object->units_pre) { $results .= $rgraphObject.".Set('chart.units.pre', '".$object->units_pre."'); \n"; }
+	
+	//Units (post)
+	if ($object->units_post) { $results .= $rgraphObject.".Set('chart.units.post', '".$object->units_post."'); \n"; }
+	
+	//Draw/Animate method
 	if ($object->animation && $object->animation !== "empty") {
 		if ($object->animation_onLoad == true) {
 			$results .= "RGraph.".$object->animation."(".$rgraphObject."); \n \n ";
@@ -337,14 +295,12 @@ foreach ($all_graphs as $object) {
 	}
 	else { $results .= $rgraphObject.".Draw(); \n \n"; }
 }
-
 $results .= "}); }else{console.log('jQuery dependency failed to load for RGraph execution');} ";
 
 
-//Create a new Javascript document (replace if it already exists) and array_push it into the main javascript parsing array
-
+//Create a new Javascript document (replace if it already exists).  This file is already included in Config::$scripts
 $rgraphJS = THEME_INCLUDES_DIR."/rgraph-js.js";
-$rgraphJSHandle = fopen($rgraphJS, 'w') or die("can't open file"); //If file exists, create it; otherwise write over what's already there.
+$rgraphJSHandle = fopen($rgraphJS, 'w') or die("can't open file");
 fwrite($rgraphJSHandle, $results);
 fclose($rgraphJSHandle);
 
