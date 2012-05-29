@@ -769,7 +769,7 @@ class Graph extends CustomPostType
 										'LINE GRAPHS:' => 'empty', 
 											'Unfold'					=> 'Effects.Line.Unfold',
 											'Unfold From Center'		=> 'Effects.Line.jQuery.UnfoldFromCenter',
-											'Trace, then Unfold'		=> 'Effects.Line.UnfoldFromCenterTrace',
+											'Trace, then Unfold'		=> 'Effects.Line.jQuery.UnfoldFromCenterTrace',
 											'Trace'						=> 'Effects.Line.jQuery.Trace',
 											'  ' 						=> 'empty',	
 										'PIE GRAPHS:' => 'empty',
