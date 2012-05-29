@@ -703,12 +703,6 @@ class Graph extends CustomPostType
 					'options' => array('Bar Graph' => 'Bar', 'Line Graph' => 'Line', 'Pie Graph' => 'Pie'),
 				),
 				array(
-					'name' => 'Display Graph Title (turn OFF)',
-					'desc' => 'Check this box if you want to remove the graph\'s title from the top of the graph.',
-					'id'   => $prefix.'graphtitle_off',
-					'type' => 'checkbox',
-				),
-				array(
 					'name'  => 'Canvas Dimensions',
 					'desc' => 'Specify the width and height of the graph canvas, separated by an "x"; e.g. "500x300"',
 					'id'   => $prefix.'dimensions',
@@ -807,6 +801,18 @@ class Graph extends CustomPostType
 					'desc' => 'Specify the width of all lines on the line graph.',
 					'id'   => $prefix.'line_width',
 					'type' => 'text',
+				),
+				array(
+					'name' => 'Display Graph Title (turn OFF)',
+					'desc' => 'Check this box if you want to remove the graph\'s title from the top of the graph.',
+					'id'   => $prefix.'graphtitle_off',
+					'type' => 'checkbox',
+				),
+				array(
+					'name' => 'Graph Title Vertical Positioning',
+					'desc' => 'If necessary, specify a vertical position for the main graph\'s title (assuming the Display Graph Title checkbox above is not checked.)  Enter a number between 0 and 1; the number is then multiplied with the gutter and then used as the vertical position.',
+					'id'   => $prefix.'graphtitle_pos_v',
+					'type' => 'checkbox',
 				),
 				array(
 					'name' => 'Title - Horizontal<br/>(Bar Graphs, Line Graphs)',

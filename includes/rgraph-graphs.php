@@ -17,7 +17,6 @@ class SingleGraph {
 		$graphID 			= NULL,
 		$graphTitle			= NULL,
 		$graphType			= NULL,
-		$graphTitleOff		= NULL,
 		$gutter_t			= NULL,
 		$gutter_r			= NULL,
 		$gutter_b			= NULL,
@@ -30,6 +29,8 @@ class SingleGraph {
 		$tooltips			= FALSE,
 		$tickmarks			= FALSE,
 		$lineWidth			= NULL,
+		$graphTitleOff		= NULL,
+		$graphTitle_pos_v	= NULL,
 		$title_pos_h		= NULL,
 		$title_pos_v		= NULL,
 		$title_h			= NULL,
@@ -77,7 +78,6 @@ if (count($graphs) > 0) {
 			$graphClass->graphID 			= $graph->ID;
 			$graphClass->graphTitle			= get_the_title($graphClass->graphID);
 			$graphClass->graphType			= get_post_meta($graphClass->graphID,'graph_graphtype',TRUE);
-			$graphClass->graphTitleOff		= get_post_meta($graphClass->graphID,'graph_graphtitle_off',TRUE);
 			$graphClass->gutter_t			= get_post_meta($graphClass->graphID,'graph_gutter_top',TRUE);
 			$graphClass->gutter_r			= get_post_meta($graphClass->graphID,'graph_gutter_right',TRUE);
 			$graphClass->gutter_b			= get_post_meta($graphClass->graphID,'graph_gutter_bottom',TRUE);
@@ -90,6 +90,8 @@ if (count($graphs) > 0) {
 			$graphClass->tooltips			= get_post_meta($graph->ID,'graph_tooltips',TRUE);
 			$graphClass->lineWidth			= get_post_meta($graph->ID,'graph_line_width',TRUE);
 			$graphClass->tickmarks			= get_post_meta($graph->ID,'graph_tickmarks',TRUE);
+			$graphClass->graphTitleOff		= get_post_meta($graphClass->graphID,'graph_graphtitle_off',TRUE);
+			$graphClass->graphTitle_pos_v	= get_post_meta($graph->ID,'graph_graphtitle_pos_v',TRUE);
 			$graphClass->title_h			= get_post_meta($graph->ID,'graph_title_h',TRUE);
 			$graphClass->title_v			= get_post_meta($graph->ID,'graph_title_v',TRUE);
 			$graphClass->title_pos_h		= get_post_meta($graph->ID,'graph_title_pos_h',TRUE);
@@ -148,6 +150,8 @@ foreach ($all_graphs as $object) {
 	//Basic default values
 	$results .= $rgraphObject.".Set('chart.background.grid.autofit', true); \n";
 	$results .= $rgraphObject.".Set('chart.text.font', 'Helvetica'); \n \n";
+	$results .= $rgraphObject.".Set('chart.title.vpos', 0.2); \n"; //Setting this by default as most graphs seem to need the extra spacing
+	$results .= $rgraphObject.".Set('chart.title.size', 14); \n";
 		
 	//Gutters
 	if ($object->gutter_t) {
@@ -163,9 +167,12 @@ foreach ($all_graphs as $object) {
 		$results .= $rgraphObject.".Set('chart.gutter.left', ".$object->gutter_l."); \n";
 	}
 	
-	//Main chart title
+	//Main chart title and vertical positioning
 	if ($object->graphTitleOff == NULL) {
 		$results .= $rgraphObject.".Set('chart.title', '".$object->graphTitle."'); \n";
+		if ($object->graphTitle_pos_v) {
+			$results .= $rgraphObject.".Set('chart.title.vpos', '".$object->graphTitle_pos_v."'); \n";
+		}
 	}
 		
 	//Colors
@@ -223,28 +230,19 @@ foreach ($all_graphs as $object) {
 		$results .= $rgraphObject.".Set('chart.linewidth', ".$object->lineWidth."); \n";
 	}
 		
-	//Horizontal Title
+	//Horizontal Title and positioning
 	if ($object->title_h) {
 		$results .= $rgraphObject.".Set('chart.title.xaxis', '".$object->title_h."'); \n";
-	}
-	//Vertical Title
-	if ($object->title_v) {
-		$results .= $rgraphObject.".Set('chart.title.yaxis', '".$object->title_v."'); \n";
-	}
-	
-	//Horizontal Title Positioning
-	if ($object->title_pos_h) {
-		if ($object->graphType == "Line") { //Apparently lines use a different designation for horizontal/vertical title positioning
+		if ($object->title_pos_h) {
 			$results .= $rgraphObject.".Set('chart.title.xaxis.pos', ".$object->title_pos_h."); \n";
 		}
-		else { $results .= $rgraphObject.".Set('chart.title.hpos', ".$object->title_pos_h."); \n"; }
 	}
-	//Vertical Title Positioning
-	if ($object->title_pos_v) {
-		if ($object->graphType == "Line") {
+	//Vertical Title and positioning
+	if ($object->title_v) {
+		$results .= $rgraphObject.".Set('chart.title.yaxis', '".$object->title_v."'); \n";
+		if ($object->title_pos_v) {
 			$results .= $rgraphObject.".Set('chart.title.yaxis.pos', ".$object->title_pos_v."); \n";
 		}
-		else { $results .= $rgraphObject.".Set('chart.title.vpos', ".$object->title_pos_v."); \n"; }
 	}
 	
 	//Horizontal Labels
