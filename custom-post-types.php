@@ -759,7 +759,7 @@ class Graph extends CustomPostType
 											'Canvas Fade In' 			=> 'Effects.Fade.In',
 											'Canvas Expand' 			=> 'Effects.jQuery.Expand',
 											'Canvas Reveal' 			=> 'Effects.jQuery.Reveal',
-											'Canvas Horizontal Blinds' 	=> 'Effects.jQuery.Blinds.Open',
+											'Canvas Horizontal Blinds' 	=> 'Effects.jQuery.HBlinds.Open',
 											'Canvas Vertical Blinds' 	=> 'Effects.jQuery.VBlinds.Open',
 											'    ' 						=> 'empty',
 										'BAR GRAPHS:' => 'empty', 
