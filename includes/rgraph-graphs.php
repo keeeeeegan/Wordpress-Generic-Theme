@@ -323,12 +323,12 @@ foreach ($all_graphs as $object) {
 	//Draw method
 	if ($object->animation && $object->animation !== "empty") {
 		if ($object->animation_onLoad == true) {
-			$results .= $rgraphObject.".Set('RGraph.', '".$object->animation."'); \n";
+			$results .= "RGraph.".$object->animation."(".$rgraphObject."); \n ";
 		}
 		else {
 			$results .= "$('canvas#".$rgraphObject."').bind('inview', function (event, visible) {
 							if (visible == true) { 
-								".$rgraphObject.".Set('RGraph.', '".$object->animation."'); \n 
+								RGraph.".$object->animation."(".$rgraphObject."); \n 
 							} else { 
 								$('".$rgraphObject."').unbind('inview'); 
 							}
