@@ -812,7 +812,7 @@ class Graph extends CustomPostType
 					'name' => 'Graph Title Vertical Positioning',
 					'desc' => 'If necessary, specify a vertical position for the main graph\'s title (assuming the Display Graph Title checkbox above is not checked.)  Enter a number between 0 and 1; the number is then multiplied with the gutter and then used as the vertical position.',
 					'id'   => $prefix.'graphtitle_pos_v',
-					'type' => 'checkbox',
+					'type' => 'text',
 				),
 				array(
 					'name' => 'Title - Horizontal<br/>(Bar Graphs, Line Graphs)',
