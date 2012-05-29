@@ -162,7 +162,7 @@ foreach ($all_graphs as $object) {
 	
 	//Basic default values
 	$results .= $rgraphObject.".Set('chart.background.grid.autofit', true); \n";
-	$results .= $rgraphObject.".Set('chart.text.font', 'Helvetica'); \n \n";
+	$results .= $rgraphObject.".Set('chart.text.font', 'Helvetica'); \n";
 	$results .= $rgraphObject.".Set('chart.title.vpos', 0.2); \n"; //Setting this by default as most graphs seem to need the extra spacing
 	$results .= $rgraphObject.".Set('chart.title.size', 14); \n";
 		
@@ -323,16 +323,16 @@ foreach ($all_graphs as $object) {
 	//Draw method
 	if ($object->animation && $object->animation !== "empty") {
 		if ($object->animation_onLoad == true) {
-			$results .= "RGraph.".$object->animation."(".$rgraphObject."); \n ";
+			$results .= "RGraph.".$object->animation."(".$rgraphObject."); \n \n ";
 		}
 		else {
 			$results .= "$('canvas#".$rgraphObject."').bind('inview', function (event, visible) {
 							if (visible == true) { 
-								RGraph.".$object->animation."(".$rgraphObject."); \n 
+								RGraph.".$object->animation."(".$rgraphObject.");
 							} else { 
-								$('".$rgraphObject."').unbind('inview'); 
+								$('canvas#".$rgraphObject."').unbind('inview');
 							}
-						});";
+						}); \n \n";
 		}
 	}
 	else { $results .= $rgraphObject.".Draw(); \n \n"; }
