@@ -135,13 +135,24 @@ foreach ($all_graphs as $object) {
 		
 	//Create new Graph object:
 	$results .= "var ".$rgraphObject." = new RGraph.".$object->graphType."('".$rgraphObject."',";
-	$dataString = "";
-	foreach ($object->data as $dataGroup) {
-		$dataGroup = "[".$dataGroup."],";
-		$dataString .= $dataGroup;
+	if (count($object->data) > 1) { //If more than one data set exists, they need to all be grouped within a bracket set "[ ]"
+		$dataString = "[";
+		foreach ($object->data as $dataGroup) {
+			$dataGroup = "[".$dataGroup."],";
+			$dataString .= $dataGroup;
+		}
+		$dataString .= "]);";
+		$dataString = str_replace(",]);", "]);", $dataString);
 	}
-	$dataString .= ");";
-	$dataString = str_replace(",);", ");", $dataString);
+	else { //If it's just one data set, we only use the single containing brackets
+		$dataString = "";
+		foreach ($object->data as $dataGroup) {
+			$dataGroup = "[".$dataGroup."],";
+			$dataString .= $dataGroup;
+		}
+		$dataString .= ");";
+		$dataString = str_replace(",);", ");", $dataString);
+	}
 	$results .= $dataString."\n";
 			
 		
