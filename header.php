@@ -29,6 +29,7 @@
 		<?php endif;?>
 		<!--[if IE]>
 		<script type="text/javascript" src="<?=THEME_STATIC_URL?>/rgraph/excanvas/excanvas.compiled.js"></script>
+		<script type="text/javascript">var canvas = document.createElement('canvas'); G_vmlCanvasManager.initElement(canvas);</script>
 		<![endif]-->
 	</head>
 	<body class="<?=body_classes()?>">
