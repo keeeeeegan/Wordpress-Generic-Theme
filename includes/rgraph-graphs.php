@@ -12,9 +12,7 @@
 class SingleGraph {
 	public
 		$graphID 			= NULL,
-		$graphDimensions 	= NULL,
-		$graphDimensions_w	= NULL,
-		$graphDimensions_h	= NULL,
+		$graphDimensions 	= array(),
 		$graphTitle			= NULL,
 		$graphType			= NULL,
 		$gutter_t			= NULL,
@@ -62,9 +60,7 @@ if (count($graphs) > 0) {
 			$graph = get_post($graphPostID);		//Use the ID as the post ID for get_post()
 			$graphClass = new SingleGraph;
 			$graphClass->graphID 			= $graph->ID;
-			$graphClass->graphDimensions	= explode("x", strtolower(get_post_meta($graphID,'graph_dimensions',TRUE)));
-			$graphClass->graphDimensions_w 	= $graphClass->graphDimensions[0];
-			$graphClass->graphDimensions_h 	= $graphClass->graphDimensions[1];
+			$graphClass->graphDimensions	= explode("x", strtolower(get_post_meta($graph->ID,'graph_dimensions',TRUE)));
 			$graphClass->graphTitle			= get_the_title($graphClass->graphID);
 			$graphClass->graphType			= get_post_meta($graphClass->graphID,'graph_graphtype',TRUE);
 			$graphClass->gutter_t			= get_post_meta($graphClass->graphID,'graph_gutter_top',TRUE);
@@ -303,13 +299,15 @@ foreach ($all_graphs as $object) {
 	
 	//ExCanvas initialization
 	$results .= "
+	if ( ($.browser.msie) && ($.browser.version < 9) ) {
 		var canvasWrap = $('#".$rgraphObject."_wrap'); 
 		var canvas 	   = document.createElement('canvas');
-		canvas.attr('width',".$object->graphDimensions_w.");
-		canvas.attr('height',".$object->graphDimensions_h.");
+		canvas.attr('width', ".$object->graphDimensions[0].");
+		canvas.attr('height', ".$object->graphDimensions[1].");
 		canvasWrap.append(canvas);
 		G_vmlCanvasManager.initElement(canvas);
 		var ".$rgraphObject." = canvas.getContext('2d');
+	}
 	";
 	
 }
