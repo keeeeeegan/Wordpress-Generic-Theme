@@ -77,12 +77,6 @@ Generic.homeDimensions = function($){
 	
 };
 
-Generic.moveExcanvas = function($) {
-	if ($('script[src$="excanvas.compiled.js"]')) {
-		$('head').append($('script[src$="excanvas.compiled.js"]'));
-	}
-};
-
 if (typeof jQuery != 'undefined'){
 	jQuery(document).ready(function($) {
 		Webcom.slideshow($);
@@ -92,7 +86,6 @@ if (typeof jQuery != 'undefined'){
 		Webcom.loadMoreSearchResults($);
 		
 		/* Theme Specific Code Here */
-		Generic.moveExcanvas($);
 		//Generic.homeDimensions($);
 		//Generic.resizeSearch($);
 	});
