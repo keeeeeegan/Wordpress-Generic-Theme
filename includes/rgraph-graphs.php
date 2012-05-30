@@ -297,19 +297,6 @@ foreach ($all_graphs as $object) {
 	}
 	else { $results .= $rgraphObject.".Draw(); \n \n"; }
 	
-	//ExCanvas initialization
-	$results .= "
-	if ( ($.browser.msie) && ($.browser.version < 9) && ($('#".$rgraphObject."').has('img').length == false) ) {
-		var canvasWrap = $('#".$rgraphObject."_wrap'); 
-		var canvas 	   = document.createElement('canvas');
-		canvas.attr('width', ".$object->graphDimensions[0].");
-		canvas.attr('height', ".$object->graphDimensions[1].");
-		canvasWrap.append(canvas);
-		G_vmlCanvasManager.initElement(canvas);
-		var ".$rgraphObject." = canvas.getContext('2d');
-	}
-	";
-	
 }
 $results .= "}); }else{console.log('jQuery dependency failed to load for RGraph execution');} ";
 
