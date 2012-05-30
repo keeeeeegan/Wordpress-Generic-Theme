@@ -201,7 +201,8 @@ foreach ($all_graphs as $object) {
 		$tooltipString .= "]);";
 		$tooltipString = str_replace("]);", "']);", $tooltipString); //Make sure the list ends with an apostrophe
 		$tooltipString = str_replace("''", "", $tooltipString);		 //Remove any empty sets of data
-		$tooltipString = str_replace(",]);", "]);", $tooltipString); //Remove stray commas from end of list
+		$tooltipString = str_replace(",']);", $object->units_post."']);", $tooltipString); //Remove stray commas from end of list; add a post units value to the last value in the string
+		$tooltipString = str_replace("',", $object->units_post."',", $tooltipString);		 //Add post units to the rest of the values in the string
 		$results .= $tooltipString."\n";
 	}
 	
