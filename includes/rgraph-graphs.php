@@ -103,14 +103,6 @@ $results = "
 			
 foreach ($all_graphs as $object) {
 	$rgraphObject = "rgraph".$object->graphID;
-	
-	//Excanvas Initialization for IE 7-8
-	$results .= "if ( ($.browser.msie) && ($.browser.version < 9) ) {
-					var canvas = document.createElement('canvas'); 
-					canvas.attr('id', '".$rgraphObject."');
-					G_vmlCanvasManager.initElement(canvas);
-					var ctx = canvas.getContext('2d');
-				}";
 		
 	//Create new Graph object:
 	$results .= "var ".$rgraphObject." = new RGraph.".$object->graphType."('".$rgraphObject."',";
