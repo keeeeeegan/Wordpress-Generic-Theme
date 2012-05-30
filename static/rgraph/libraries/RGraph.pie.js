@@ -118,14 +118,17 @@
             'chart.resize.handle.adjust':   [0,0],
             'chart.resize.handle.background': null,
             'chart.variant':                'pie',
-            'chart.variant.donut.color':    'white',
+            'chart.variant.donut.width':    null,
             'chart.exploded':               [],
             'chart.effect.roundrobin.multiplier': 1,
             'chart.events.click':             null,
             'chart.events.mousemove':         null,
             'chart.centerx':                  null,
             'chart.centery':                  null,
-            'chart.radius':                   null
+            'chart.radius':                   null,
+            'chart.centerpin':                null,
+            'chart.centerpin.fill':           'white',
+            'chart.centerpin.stroke':         null
         }
 
         /**
@@ -248,7 +251,7 @@
             this.context.shadowOffsetX = this.Get('chart.shadow.offsetx');
             this.context.shadowOffsetY = this.Get('chart.shadow.offsety');
             
-            this.context.arc(this.centerx + offsetx, this.centery + offsety, this.radius, 0, 6.28, 0);
+            this.context.arc(this.centerx + offsetx, this.centery + offsety, this.radius, 0, TWOPI, 0);
             
             this.context.fill();
             
@@ -263,7 +266,7 @@
 
         for (var i=0,len=this.data.length; i<len; i++) {
             
-            var angle = ((this.data[i] / this.total) * (Math.PI * 2));
+            var angle = ((this.data[i] / this.total) * TWOPI);
 
             // Draw the segment
             this.DrawSegment(angle,this.Get('chart.colors')[i],i == (this.data.length - 1), i);
@@ -298,7 +301,7 @@
 
                     this.context.arc(this.angles[i][2],
                                      this.angles[i][3],
-                                     this.radius / 2,
+                                     typeof(this.Get('chart.variant.donut.width')) == 'number' ? this.radius - this.Get('chart.variant.donut.width'): this.radius / 2,
                                      (this.angles[i][1]),
                                      (this.angles[i][0]),
                                      true);
@@ -336,6 +339,12 @@
         
         
         /**
+        * Draw centerpin if requested
+        */
+        this.DrawCenterpin();
+        
+        
+        /**
         * Setup the context menu if required
         */
         if (this.Get('chart.contextmenu')) {
@@ -356,7 +365,7 @@
                              this.centery,
                              this.radius - 2,
                              0,
-                             6.28,
+                             TWOPI,
                              0);
 
             this.context.stroke();
@@ -365,8 +374,7 @@
         /**
         * Draw the kay if desired
         */
-        if (this.Get('chart.key') != null) {
-            //this.Set('chart.key.position', 'graph');
+        if (this.Get('chart.key') && this.Get('chart.key').length) {
             RGraph.DrawKey(this, this.Get('chart.key'), this.Get('chart.colors'));
         }
 
@@ -424,7 +432,7 @@
                 var x         = 0;
                 var y         = 0;
                 var h         = explosion;
-                var t         = (subTotal + (radians / 2)) - 1.57;
+                var t         = (subTotal + (radians / 2)) - HALFPI;
                 var x         = (Math.cos(t) * explosion);
                 var y         = (Math.sin(t) * explosion);
             
@@ -437,8 +445,8 @@
             /**
             * Calculate the angles
             */
-            var startAngle = (subTotal) - 1.57;
-            var endAngle   = (((subTotal + radians))) - 1.57;
+            var startAngle = (subTotal) - HALFPI;
+            var endAngle   = (((subTotal + radians))) - HALFPI;
 
             context.arc(this.centerx + x,
                         this.centery + y,
@@ -451,7 +459,7 @@
     
                 context.arc(this.centerx + x,
                             this.centery + y,
-                            (this.radius / 2),
+                            typeof(this.Get('chart.variant.donut.width')) == 'number' ? this.radius - this.Get('chart.variant.donut.width'): this.radius / 2,
                             endAngle,
                             startAngle,
                             true);
@@ -463,7 +471,7 @@
 
 
         // Keep hold of the angles
-        this.angles.push([subTotal - (Math.PI / 2), subTotal + radians - (Math.PI / 2), this.centerx + x, this.centery + y]);
+        this.angles.push([subTotal - HALFPI, subTotal + radians - HALFPI, this.centerx + x, this.centery + y]);
 
 
         
@@ -502,12 +510,9 @@
 
             var text_size = this.Get('chart.text.size');
 
-            for (i=0; i<labels.length; ++i) {
+            for (i=0; i<this.angles.length; ++i) {
             
-                /**
-                * T|his ensures that if we're given too many labels, that we don't get an error
-                */
-                if (typeof(this.angles) == 'undefined') {
+                if (typeof(labels[i]) != 'string' && typeof(labels[i]) != 'number') {
                     continue;
                 }
 
@@ -519,16 +524,16 @@
                 /**
                 * Alignment
                 */
-                if (a < (Math.PI / 2)) {
+                if (a < HALFPI) {
                     hAlignment = 'left';
                     vAlignment = 'center';
-                } else if (a < (Math.PI * 2)) {
+                } else if (a < TWOPI) {
                     hAlignment = 'right';
                     vAlignment = 'center';
-                } else if (a < (Math.PI * 1.5)) {
+                } else if (a < (PI + HALFPI)) {
                     hAlignment = 'right';
                     vAlignment = 'center';
-                } else if (a < (Math.PI * 2)) {
+                } else if (a < TWOPI) {
                     hAlignment = 'left';
                     vAlignment = 'center';
                 }
@@ -565,7 +570,7 @@
                 RGraph.Text(context,
                             this.Get('chart.text.font'),
                             text_size,
-                            this.centerx + explosion_offsetx + ((this.radius + 10)* Math.cos(a)) + (this.Get('chart.labels.sticks') ? (a < 1.57 || a > 4.71 ? 2 : -2) : 0),
+                            this.centerx + explosion_offsetx + ((this.radius + 10)* Math.cos(a)) + (this.Get('chart.labels.sticks') ? (a < HALFPI || a > (TWOPI + HALFPI) ? 2 : -2) : 0),
                             this.centery + explosion_offsety + (((this.radius + 10) * Math.sin(a))),
                             labels[i],
                             vAlignment,
@@ -664,13 +669,13 @@
             * Account for the correct quadrant
             */
             if (x < 0 && y >= 0) {
-                theta += Math.PI;
+                theta += PI;
             } else if (x < 0 && y < 0) {
-                theta += Math.PI;
+                theta += PI;
             }
 
-            if (theta > (2 * Math.PI)) {
-                theta -= (2 * Math.PI);
+            if (theta > TWOPI) {
+                theta -= TWOPI;
             }
 
             if (theta >= angles[i][0] && theta < angles[i][1]) {
@@ -681,7 +686,7 @@
                     return null;
                 }
 
-                if (this.type == 'pie' && this.Get('chart.variant') == 'donut' && (hyp > this.radius || hyp < (this.radius / 2) ) ) {
+                if (this.type == 'pie' && this.Get('chart.variant') == 'donut' && (hyp > this.radius || hyp < (typeof(this.Get('chart.variant.donut.width')) == 'number' ? this.radius - this.Get('chart.variant.donut.width') : this.radius / 2) ) ) {
                     return null;
                 }
 
@@ -690,14 +695,14 @@
                 ret[0] = angles[i][2];
                 ret[1] = angles[i][3];
                 ret[2] = this.radius;
-                ret[3] = angles[i][0] - (2 * Math.PI);
+                ret[3] = angles[i][0] - TWOPI;
                 ret[4] = angles[i][1];
                 ret[5] = i;
 
 
                 
-                if (ret[3] < 0) ret[3] += (2 * Math.PI);
-                if (ret[4] > (2 * Math.PI)) ret[4] -= (2 * Math.PI);
+                if (ret[3] < 0) ret[3] += TWOPI;
+                if (ret[4] > TWOPI) ret[4] -= TWOPI;
                 
                 ret[3] = ret[3];
                 ret[4] = ret[4];
@@ -745,7 +750,7 @@
                                      0);
                     this.context.arc(this.angles[i][2],
                                      this.angles[i][3],
-                                     this.Get('chart.variant') == 'donut' ? this.radius / 2: this.radius,
+                                     this.Get('chart.variant') == 'donut' ? (typeof(this.Get('chart.variant.donut.width')) == 'number' ? this.radius - this.Get('chart.variant.donut.width') : this.radius / 2): this.radius,
                                      this.angles[i][0],
                                      this.angles[i][0] + 0.0001,
                                      0);
@@ -913,19 +918,20 @@
             } else {
 
                 this.context.beginPath();
+
                     this.context.strokeStyle = this.Get('chart.highlight.style.2d.stroke');
                     this.context.fillStyle   = this.Get('chart.highlight.style.2d.fill');
                     
                     if (this.Get('chart.variant') == 'donut') {
                         this.context.arc(shape['x'], shape['y'], shape['radius'], shape['angle.start'], shape['angle.end'], false);
-                        this.context.arc(shape['x'], shape['y'], shape['radius'] / 2, shape['angle.end'], shape['angle.start'], true);
+                        this.context.arc(shape['x'], shape['y'], typeof(this.Get('chart.variant.donut.width')) == 'number' ? this.radius - this.Get('chart.variant.donut.width') : shape['radius'] / 2, shape['angle.end'], shape['angle.start'], true);
                     } else {
-                        this.context.arc(shape['x'], shape['y'], shape['radius'], shape['angle.start'], shape['angle.end'], false);
+                        this.context.arc(shape['x'], shape['y'], shape['radius'] + 1, shape['angle.start'], shape['angle.end'], false);
                         this.context.lineTo(shape['x'], shape['y']);
                     }
                 this.context.closePath();
     
-                this.context.stroke();
+                //this.context.stroke();
                 this.context.fill();
             }
         }
@@ -941,5 +947,82 @@
     {
         if (this.getShape(e)) {
             return this;
+        }
+    }
+    
+    
+    
+    /**
+    * Draws the centerpin if requested
+    */
+    RGraph.Pie.prototype.DrawCenterpin = function ()
+    {
+        if (typeof(this.Get('chart.centerpin')) == 'number' &&this.Get('chart.centerpin') > 0) {
+            this.context.beginPath();
+                this.context.strokeStyle = this.Get('chart.centerpin.stroke') ? this.Get('chart.centerpin.stroke') : this.Get('chart.strokestyle');
+                this.context.fillStyle = this.Get('chart.centerpin.fill') ? this.Get('chart.centerpin.fill') : this.Get('chart.strokestyle');
+                this.context.moveTo(this.centerx, this.centery);
+                this.context.arc(this.centerx, this.centery, this.Get('chart.centerpin'), 0, TWOPI, false);                
+            this.context.stroke();
+            this.context.fill();
+        }
+    }
+
+
+
+    /**
+    * This function positions a tooltip when it is displayed
+    * 
+    * @param obj object    The chart object
+    * @param int x         The X coordinate specified for the tooltip
+    * @param int y         The Y coordinate specified for the tooltip
+    * @param objec tooltip The tooltips DIV element
+    */
+    RGraph.Pie.prototype.positionTooltip = function (obj, x, y, tooltip, idx)
+    {
+        var coordX      = obj.angles[idx][2];
+        var coordY      = obj.angles[idx][3];
+        var angleStart  = obj.angles[idx][0];
+        var angleEnd    = obj.angles[idx][1];
+        var angleCenter = ((angleEnd - angleStart) / 2) + angleStart;
+        var canvasXY    = RGraph.getCanvasXY(obj.canvas);
+        var gutterLeft  = obj.Get('chart.gutter.left');
+        var gutterTop   = obj.Get('chart.gutter.top');
+        var width       = tooltip.offsetWidth;
+        var height      = tooltip.offsetHeight;
+        var x           = canvasXY[0] + this.angles[idx][2] + (Math.cos(angleCenter) * (this.Get('chart.variant') == 'donut' && typeof(this.Get('chart.variant.donut.width')) == 'number' ? ((this.radius - this.Get('chart.variant.donut.width')) + (this.Get('chart.variant.donut.width') / 2)) : (this.radius * (this.Get('chart.variant') == 'donut' ? 0.75 : 0.5))));
+        var y           = canvasXY[1] + this.angles[idx][3] + (Math.sin(angleCenter) * (this.Get('chart.variant') == 'donut' && typeof(this.Get('chart.variant.donut.width')) == 'number' ? ((this.radius - this.Get('chart.variant.donut.width')) + (this.Get('chart.variant.donut.width') / 2)) : (this.radius * (this.Get('chart.variant') == 'donut' ? 0.75 : 0.5))));
+
+        
+        // By default any overflow is hidden
+        tooltip.style.overflow = '';
+
+        // The arrow
+        var img = new Image();
+            img.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAFCAYAAACjKgd3AAAARUlEQVQYV2NkQAN79+797+RkhC4M5+/bd47B2dmZEVkBCgcmgcsgbAaA9GA1BCSBbhAuA/AagmwQPgMIGgIzCD0M0AMMAEFVIAa6UQgcAAAAAElFTkSuQmCC';
+            img.style.position = 'absolute';
+            img.id = '__rgraph_tooltip_pointer__';
+            img.style.top = (tooltip.offsetHeight - 2) + 'px';
+        tooltip.appendChild(img);
+        
+        // Reposition the tooltip if at the edges:
+
+        // LEFT edge
+        if ((window.event.pageX - (width / 2)) < 10) {
+            tooltip.style.left = (x - (width * 0.1)) + 'px';
+            tooltip.style.top  = (y - height - 4) + 'px';
+            img.style.left = ((width * 0.1) - 8.5) + 'px';
+
+        // RIGHT edge
+        } else if ((x + (width / 2)) > (document.body.offsetWidth - 10) ) {
+            tooltip.style.left = (x - (width * 0.9)) + 'px';
+            tooltip.style.top  = (y - height - 4) + 'px';
+            img.style.left = ((width * 0.9) - 8.5) + 'px';
+
+        // Default positioning - CENTERED
+        } else {
+            tooltip.style.left = (x - (width / 2)) + 'px';
+            tooltip.style.top  = (y - height - 4) + 'px';
+            img.style.left = ((width * 0.5) - 8.5) + 'px';
         }
     }

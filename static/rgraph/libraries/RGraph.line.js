@@ -127,6 +127,7 @@
             'chart.shadow.color':           'rgba(0,0,0,0.5)',
             'chart.tooltips':               null,
             'chart.tooltips.hotspot.xonly': false,
+            'chart.tooltips.hotspot.size':  5,
             'chart.tooltips.effect':        'fade',
             'chart.tooltips.css.class':     'RGraph_tooltip',
             'chart.tooltips.event':         'onmousemove',
@@ -135,7 +136,7 @@
             'chart.highlight.stroke':       'gray',
             'chart.highlight.fill':         'white',
             'chart.stepped':                false,
-            'chart.key':                    [],
+            'chart.key':                    null,
             'chart.key.background':         'white',
             'chart.key.position':           'graph',
             'chart.key.halign':             null,
@@ -299,10 +300,12 @@
 
         /**
         * Reverse the tickmarks to make them correspond to the right line
+        * 
+        * Taken out - 1/5/12
         */
-        if (name == 'chart.tickmarks' && typeof(value) == 'object' && value) {
-            value = RGraph.array_reverse(value);
-        }
+        //if (name == 'chart.tickmarks' && typeof(value) == 'object' && value) {
+        //    value = RGraph.array_reverse(value);
+        //}
         
         /**
         * Inverted Y axis should show the bottom end of the scale
@@ -597,11 +600,12 @@
                 if (typeof(this.Get('chart.fillstyle')) == 'object' && this.Get('chart.fillstyle')[j]) {
                    var fill = this.Get('chart.fillstyle')[j];
                 
+                } else if (typeof(this.Get('chart.fillstyle')) == 'object' && this.Get('chart.fillstyle').toString().indexOf('Gradient') > 0) {
+                   var fill = this.Get('chart.fillstyle');
+                
                 } else if (typeof(this.Get('chart.fillstyle')) == 'string') {
                     var fill = this.Get('chart.fillstyle');
     
-                } else {
-                    alert('[LINE] Warning: chart.fillstyle must be either a string or an array with the same number of elements as you have sets of data');
                 }
             } else if (this.Get('chart.filled')) {
                 var fill = this.Get('chart.colors')[j];
@@ -719,7 +723,7 @@
         this.DrawRange();
         
         // Draw a key if necessary
-        if (this.Get('chart.key').length && RGraph.DrawKey) {
+        if (this.Get('chart.key') && this.Get('chart.key').length && RGraph.DrawKey) {
             RGraph.DrawKey(this, this.Get('chart.key'), this.Get('chart.colors'));
         }
 
@@ -1758,7 +1762,7 @@
 
             if (tickmarks == 'circle'|| tickmarks == 'filledcircle' || (tickmarks == 'endcircle') ) {
                 this.context.beginPath();
-                this.context.arc(xPos + offset, yPos + offset, this.Get('chart.ticksize'), 0, 360 / (180 / Math.PI), false);
+                this.context.arc(xPos + offset, yPos + offset, this.Get('chart.ticksize'), 0, 360 / (180 / PI), false);
 
                 if (tickmarks == 'filledcircle') {
                     this.context.fillStyle = isShadow ? this.Get('chart.shadow.color') : this.context.strokeStyle;
@@ -1832,7 +1836,7 @@
 
                 // The outer white circle
                 this.context.beginPath();
-                this.context.arc(xPos, yPos, this.Get('chart.ticksize'), 0, 360 / (180 / Math.PI), false);
+                this.context.arc(xPos, yPos, this.Get('chart.ticksize'), 0, 360 / (180 / PI), false);
                 this.context.closePath();
 
 
@@ -1843,7 +1847,7 @@
                 this.context.beginPath();
                 this.context.fillStyle   = color;
                 this.context.strokeStyle = color;
-                this.context.arc(xPos, yPos, this.Get('chart.ticksize') - 2, 0, 360 / (180 / Math.PI), false);
+                this.context.arc(xPos, yPos, this.Get('chart.ticksize') - 2, 0, 360 / (180 / PI), false);
 
                 this.context.closePath();
 
@@ -2163,14 +2167,14 @@
             var y = obj.coords[i][1];
 
             // Do this if the hotspot is triggered by the X coord AND the Y coord
-            if (   mouseX <= (x + 5)
-                && mouseX >= (x - 5)
-                && mouseY <= (y + 5)
-                && mouseY >= (y - 5)
+            if (   mouseX <= (x + obj.Get('chart.tooltips.hotspot.size'))
+                && mouseX >= (x - obj.Get('chart.tooltips.hotspot.size'))
+                && mouseY <= (y + obj.Get('chart.tooltips.hotspot.size'))
+                && mouseY >= (y - obj.Get('chart.tooltips.hotspot.size'))
                ) {
 
                     var tooltip = RGraph.parseTooltipText(this.Get('chart.tooltips'), i);
-                    
+
                     // Work out the dataset
                     var dataset = 0;
                     var idx = i;
@@ -2182,8 +2186,8 @@
                     return {0:obj, 1:x, 2:y, 3:i, 'object': obj, 'x': x, 'y': y, 'index': i, 'tooltip': tooltip, 'dataset': dataset, 'index_adjusted': idx};
 
             } else if (    obj.Get('chart.tooltips.hotspot.xonly') == true
-                        && mouseX <= (x + 5)
-                        && mouseX >= (x - 5)) {
+                        && mouseX <= (x + obj.Get('chart.tooltips.hotspot.size'))
+                        && mouseX >= (x - obj.Get('chart.tooltips.hotspot.size'))) {
 
                         var tooltip = RGraph.parseTooltipText(this.Get('chart.tooltips'), i);
 
@@ -2389,5 +2393,119 @@
                 
                 RGraph.FireCustomEvent(this, 'onadjust');
             }
+        }
+    }
+
+
+    /**
+    * This function can be used when the canvas is clicked on (or similar - depending on the event)
+    * to retrieve the relevant Y coordinate for a particular value.
+    * 
+    * @param int value The value to get the Y coordinate for
+    */
+    RGraph.Line.prototype.getYCoord = function (value)
+    {
+        if (typeof(value) != 'number') {
+            return null;
+        }
+
+        var y;
+        var xaxispos = this.Get('chart.xaxispos');
+
+        // Higher than max
+        if (value > this.max) {
+            value = this.max;
+        }
+
+        if (xaxispos == 'top') {
+        
+            // Account for negative numbers
+            if (value < 0) {
+                value = Math.abs(value);
+            }
+
+            y = ((value - this.min) / (this.max - this.min)) * this.grapharea;
+
+            // Inverted Y labels
+            if (this.Get('chart.ylabels.invert')) {
+                y = this.grapharea - y;
+            }
+
+            y = y + this.gutterTop
+
+        } else if (xaxispos == 'center') {
+
+            y = ((value - this.min) / (this.max - this.min)) * (this.grapharea / 2);
+            y = (this.grapharea / 2) - y;
+            y += this.gutterTop;
+
+        } else {
+
+            if (value < this.min) value = this.min;
+            if (value > this.max) value = this.max;
+
+            y = ((value - this.min) / (this.max - this.min)) * this.grapharea;
+            
+            // Inverted Y labels
+            if (this.Get('chart.ylabels.invert')) {
+                y = this.grapharea - y;
+            }
+
+            y = this.canvas.height - this.gutterBottom - y;
+        }
+        
+        return y;
+    }
+
+
+
+    /**
+    * This function positions a tooltip when it is displayed
+    * 
+    * @param obj object    The chart object
+    * @param int x         The X coordinate specified for the tooltip
+    * @param int y         The Y coordinate specified for the tooltip
+    * @param objec tooltip The tooltips DIV element
+    */
+    RGraph.Line.prototype.positionTooltip = function (obj, x, y, tooltip, idx)
+    {
+        var coordX     = obj.coords[tooltip.__index__][0];
+        var coordY     = obj.coords[tooltip.__index__][1];
+        var canvasXY   = RGraph.getCanvasXY(obj.canvas);
+        var gutterLeft = obj.Get('chart.gutter.left');
+        var gutterTop  = obj.Get('chart.gutter.top');
+        var width      = tooltip.offsetWidth;
+
+        // Set the top position
+        tooltip.style.left = 0;
+        tooltip.style.top  = parseInt(tooltip.style.top) - 9 + 'px';
+        
+        // By default any overflow is hidden
+        tooltip.style.overflow = '';
+
+        // The arrow
+        var img = new Image();
+            img.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAFCAYAAACjKgd3AAAARUlEQVQYV2NkQAN79+797+RkhC4M5+/bd47B2dmZEVkBCgcmgcsgbAaA9GA1BCSBbhAuA/AagmwQPgMIGgIzCD0M0AMMAEFVIAa6UQgcAAAAAElFTkSuQmCC';
+            img.style.position = 'absolute';
+            img.id = '__rgraph_tooltip_pointer__';
+            img.style.top = (tooltip.offsetHeight - 2) + 'px';
+        tooltip.appendChild(img);
+        
+        // Reposition the tooltip if at the edges:
+        
+        // LEFT edge
+        if ((canvasXY[0] + coordX - (width / 2)) < 10) {
+            tooltip.style.left = (canvasXY[0] + coordX - (width * 0.1)) + 'px';
+            img.style.left = ((width * 0.1) - 8.5) + 'px';
+
+        // RIGHT edge
+        } else if ((canvasXY[0] + coordX + (width / 2)) > document.body.offsetWidth) {
+            tooltip.style.left = canvasXY[0] + coordX - (width * 0.9) + 'px';
+            img.style.left = ((width * 0.9) - 8.5) + 'px';
+
+        // Default positioning - CENTERED
+        } else {
+            tooltip.style.left = (canvasXY[0] + coordX - (width * 0.5)) + 'px';
+            img.style.left = ((width * 0.5) - 8.5) + 'px';
         }
     }

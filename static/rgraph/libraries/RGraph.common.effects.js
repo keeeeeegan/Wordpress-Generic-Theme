@@ -1,4 +1,4 @@
-        /**
+    /**
     * o------------------------------------------------------------------------------o
     * | This file is part of the RGraph package - you can learn more at:             |
     * |                                                                              |
@@ -22,7 +22,7 @@
     */
     if (typeof(RGraph) == 'undefined') RGraph = {isRGraph:true,type:'common'};
     
-    RGraph.Effects = {}
+    RGraph.Effects = {};
     RGraph.Effects.Fade           = {}; RGraph.Effects.jQuery         = {}
     RGraph.Effects.jQuery.HBlinds = {}; RGraph.Effects.jQuery.VBlinds = {}
     RGraph.Effects.jQuery.Slide   = {}; RGraph.Effects.Pie            = {}
@@ -735,7 +735,9 @@
     {
         var totalFrames  = 30;
         var currentFrame = 0;
-        var diff         = obj.value - obj.currentValue;
+        var value        = Math.min(obj.value, obj.max);
+        var value        = Math.max(obj.value, obj.min);
+        var diff         = value - obj.currentValue;
         var increment    = diff / totalFrames;
         var callback     = arguments[2] ? arguments[2] : null;
         
@@ -897,7 +899,7 @@
         var div    = RGraph.Effects.ReplaceCanvasWithDIV(obj.canvas);
         var delay = 1000;
         div.style.overflow= 'hidden';
-        var to = typeof(arguments[1]) == 'object' && typeof(arguments[1]['to']) == 'string' ? arguments[1]['to'] : 'left';
+        var to = typeof(arguments[1]) == 'object' && arguments[1] && typeof(arguments[1]['to']) == 'string' ? arguments[1]['to'] : 'left';
         
         canvas.style.position = 'relative';
         canvas.style.left = 0;
@@ -937,15 +939,15 @@
 
 
     /**
-    * Unfold
+    * RoundRobin
     * 
-    * This effect gradually increases the radiuss and decrease the margin of the Rose chart
+    * This effect is similar to the Pie chart RoundRobin effect
     * 
     * @param object   obj The chart object
     * @param              Not used - pass null
     * @param function     An optional callback function
     */
-    RGraph.Effects.Rose.Grow = function (obj)
+    RGraph.Effects.Rose.RoundRobin = function (obj)
     {
         var numFrames       = 60;
         var currentFrame    = 0;
@@ -954,21 +956,21 @@
         var callback        = arguments[2];
 
         obj.Set('chart.margin', margin);
-        obj.Set('chart.animation.grow.factor', 0);
+        obj.Set('chart.animation.roundrobin.factor', 0);
 
         //RGraph.Effects.Animate(obj, {'chart.margin': original_margin, 'chart.animation.grow.factor': 1, 'frames': 45}, arguments[2]);
-        function Grow_inner ()
+        function RoundRobin_inner ()
         {
             if (currentFrame++ < numFrames) {
-                obj.Set('chart.animation.grow.factor', currentFrame / numFrames);
+                obj.Set('chart.animation.roundrobin.factor', currentFrame / numFrames);
                 obj.Set('chart.margin', (currentFrame / numFrames) * original_margin);
                 RGraph.Clear(obj.canvas);
                 RGraph.RedrawCanvas(obj.canvas);
                 
-                RGraph.Effects.UpdateCanvas(Grow_inner);
+                RGraph.Effects.UpdateCanvas(RoundRobin_inner);
 
             } else {
-                obj.Set('chart.animation.grow.factor', 1);
+                obj.Set('chart.animation.roundrobin.factor', 1);
                 obj.Set('chart.margin', original_margin);
                 RGraph.Clear(obj.canvas);
                 RGraph.RedrawCanvas(obj.canvas);
@@ -979,7 +981,7 @@
             }
         }
         
-        RGraph.Effects.UpdateCanvas(Grow_inner);
+        RGraph.Effects.UpdateCanvas(RoundRobin_inner);
     }
 
 
@@ -998,15 +1000,13 @@
         obj.Draw();
         RGraph.RedrawCanvas(obj.canvas);
 
-        var center_value = obj.scale[4] / 2;
+        var center_value = obj.Get('chart.xaxispos') == 'center' ? obj.Get('chart.ymin') : obj.scale[4] / 2;
         obj.Set('chart.ymax', Number(obj.scale[4]));
 
         RGraph.Clear(obj.canvas);
 
         obj.canvas.style.opacity = original_opacity;
         var original_data = RGraph.array_clone(obj.original_data);
-        var original_blur = obj.Get('chart.shadow.blur');
-        obj.Set('chart.shadow.blur', 0);
         var callback = arguments[2];
 
         if (!obj.__increments__) {
@@ -1018,9 +1018,13 @@
                 obj.__increments__[dataset] = new Array();
 
                 for (var i=0; i<original_data[dataset].length; ++i) {
-                    obj.__increments__[dataset][i] = (original_data[dataset][i] - center_value) / numFrames;
-                    
-                    obj.original_data[dataset][i] = center_value;
+                    if (obj.Get('chart.filled') && obj.Get('chart.filled.accumulative') && dataset > 0) {
+                        obj.__increments__[dataset][i] = original_data[dataset][i] / numFrames;
+                        obj.original_data[dataset][i] = 0;
+                    } else {
+                        obj.__increments__[dataset][i] = (original_data[dataset][i] - center_value) / numFrames;
+                        obj.original_data[dataset][i] = center_value;
+                    }
                 }
             }
         }
@@ -1041,7 +1045,6 @@
             } else {
                 obj.original_data = RGraph.array_clone(original_data);
                 obj.__increments__ = null;
-                obj.Set('chart.shadow.blur', original_blur);
                 RGraph.Clear(obj.canvas);
                 RGraph.RedrawCanvas(obj.canvas);
                 
@@ -1053,6 +1056,53 @@
         
         UnfoldFromCenter();
     }
+
+
+
+    /**
+    * UnfoldFromCenterTrace
+    */
+    RGraph.Effects.Line.jQuery.UnfoldFromCenterTrace = function  (obj)
+    {
+        // Hide the canvas first
+        obj.canvas.style.visibility = 'hidden';
+        setTimeout(function () {obj.canvas.style.visibility = 'visible';}, 10);
+
+        /**
+        * First draw the chart so we can get the max
+        */
+        obj.Draw();
+        RGraph.Clear(obj.canvas);
+
+
+        var data = RGraph.array_clone(obj.original_data);
+        var callback = arguments[2];
+
+        /**
+        * When the Trace function finishes it calls this function
+        */
+        function Unfold_callback ()
+        {
+            obj.original_data = data;
+            RGraph.Effects.Line.UnfoldFromCenter(obj, null, callback);
+        }
+
+        /**
+        * Determine the mid-point
+        */
+        var half = obj.Get('chart.xaxispos') == 'center' ? obj.min : obj.max / 2;
+        obj.Set('chart.ymax', obj.max);
+
+        for (var i=0; i<obj.original_data.length; ++i) {
+            for (var j=0; j<obj.original_data[i].length; ++j) {
+                obj.original_data[i][j] = (obj.Get('chart.filled') && obj.Get('chart.filled.accumulative') && i > 0) ? 0 : half;
+            }
+        }
+
+        //RGraph.Clear(obj.canvas);
+        RGraph.Effects.Line.jQuery.Trace(obj, {'duration':1000}, Unfold_callback);
+    }
+
 
 
     /**
@@ -1153,7 +1203,7 @@
             obj.currentValue = obj.min;
         }
 
-        var totalFrames = 30;
+        var totalFrames = 60;
         var numFrame    = 0;
         var diff        = obj.value - obj.currentValue;
         var step        = diff / totalFrames
@@ -1236,7 +1286,7 @@
             for (var j=0; j<obj.original_data.length; ++j) {
                 
                 // This stops the animatioon from being completely linear
-                var easing = Math.pow(Math.sin((obj.__animation_frame__ * (90 / numFrames)) / (180 / Math.PI)), 4);
+                var easing = Math.pow(Math.sin((obj.__animation_frame__ * (90 / numFrames)) / (180 / PI)), 4);
 
                 if (typeof(obj.data[j]) == 'object') {
                     for (var k=0; k<obj.data[j].length; ++k) {
@@ -1289,6 +1339,13 @@
     */
     RGraph.Effects.Line.jQuery.Trace = function (obj)
     {
+        var callback = typeof(arguments[2]) == 'function' ? arguments[2] : function () {};
+        var opt = arguments[1] || [];
+        
+        if (!opt['duration']) {
+            opt['duration'] = 1500;
+        }
+
         RGraph.Clear(obj.canvas);
         //obj.Draw();
         RGraph.RedrawCanvas(obj.canvas);
@@ -1347,6 +1404,8 @@
         //obj2.Set('chart.tooltips', null);
         obj2.Set('chart.labels', []);
         obj2.Set('chart.background.grid', false);
+        obj2.Set('chart.background.barcolor1', 'rgba(0,0,0,0)');
+        obj2.Set('chart.background.barcolor2', 'rgba(0,0,0,0)');
         obj2.Set('chart.ylabels', false);
         obj2.Set('chart.noaxes', true);
         obj2.Set('chart.title', '');
@@ -1374,25 +1433,29 @@
         /**
         * Place a DIV over the canvas to stop interaction with it
         */
-        var div2 = document.createElement('DIV');
-            div2.id = '__rgraph_trace_animation_' + RGraph.random(0, 4351623) + '__';
-            div2.style.left = xy[0] + 'px';
-            div2.style.top = xy[1] + 'px';
-            div2.style.width = obj.canvas.width + 'px';
-            div2.style.height = obj.canvas.height + 'px';
-            div2.style.position = 'absolute';
-            div2.style.overflow = 'hidden';
-            div2.style.backgroundColor = 'rgba(0,0,0,0)';
-            div.div2 = div2;
-            obj.canvas.__rgraph_trace_cover__ = div2
-        document.body.appendChild(div2);
+            if (!obj.canvas.__rgraph_trace_cover__) {
+            var div2 = document.createElement('DIV');
+                div2.id = '__rgraph_trace_animation_' + RGraph.random(0, 4351623) + '__';
+                div2.style.left = xy[0] + 'px';
+                div2.style.top = xy[1] + 'px';
+                div2.style.width = obj.canvas.width + 'px';
+                div2.style.height = obj.canvas.height + 'px';
+                div2.style.position = 'absolute';
+                div2.style.overflow = 'hidden';
+                div2.style.backgroundColor = 'rgba(0,0,0,0)';
+                div.div2 = div2;
+                obj.canvas.__rgraph_trace_cover__ = div2
+            document.body.appendChild(div2);
+        } else {
+            div2 = obj.canvas.__rgraph_trace_cover__;
+        }
 
         /**
         * Animate the DIV that contains the canvas
         */
         $('#' + div.id).animate({
             width: obj.canvas.width + 'px'
-        }, arguments[2] ? arguments[2] : 1500, function () {RGraph.Effects.Line.Trace_callback()});
+        }, opt['duration'], function () {RGraph.Effects.Line.Trace_callback()});
 
 
         /**
@@ -1401,14 +1464,13 @@
         */
         RGraph.Effects.Line.Trace_callback = function ()
         {
-
             // Remove the window resize listener
             window.removeEventListener('resize', reposition_canvas2, false);
 
-            div.parentNode.removeChild(div);
-            document.body.removeChild(div2);
+            div.style.display = 'none';
+            div2.style.display = 'none';
 
-            div.removeChild(canvas2);
+            //div.removeChild(canvas2);
             obj.Set('chart.line.visible', true);
             
             // Revert the filled status back to as it was
@@ -1420,6 +1482,8 @@
             RGraph.RedrawCanvas(obj.canvas);
             
             obj.canvas.__rgraph_trace_cover__ = null;
+            
+            callback(obj);
         }
     }
 
@@ -1439,14 +1503,14 @@
         var callback     = arguments[2] ? arguments[2] : null;
         var opt          = arguments[1];
         var currentFrame = 0;
-        var numFrames    = 60;
+        var numFrames    = (opt && opt['frames']) ? opt['frames'] : 90;
         var targetRadius =  obj.getRadius();
 
         function RoundRobin_inner ()
         {
-            obj.Set('chart.effect.roundrobin.multiplier', Math.pow(Math.sin((currentFrame * (90 / numFrames)) / (180 / Math.PI)), 2) * (currentFrame / numFrames) );
+            obj.Set('chart.effect.roundrobin.multiplier', Math.pow(Math.sin((currentFrame * (90 / numFrames)) / (180 / PI)), 2) * (currentFrame / numFrames) );
 
-            if (!opt || opt['radius']) {
+            if (!opt || typeof(opt['radius']) == 'undefined' || opt['radius'] == true) {
                 obj.Set('chart.radius', targetRadius * obj.Get('chart.effect.roundrobin.multiplier'));
             }
             
@@ -1476,10 +1540,11 @@
     {
         var numFrames = 90;
         var distance = Math.min(obj.canvas.width, obj.canvas.height);
+        var exploded = obj.Get('chart.exploded');
         
         function Implode_inner ()
         {
-            obj.Set('chart.exploded', Math.sin(numFrames / 57.3) * distance);
+            obj.Set('chart.exploded', Math.sin(numFrames / (180 / PI)) * distance);
             RGraph.Clear(obj.canvas)
             //obj.Draw();
             RGraph.RedrawCanvas(obj.canvas);
@@ -1489,7 +1554,7 @@
                 RGraph.Effects.UpdateCanvas(Implode_inner);
             } else {
                 // Finish off the animation
-                obj.Set('chart.exploded', 0);
+                obj.Set('chart.exploded', exploded);
                 RGraph.Clear(obj.canvas);
                 RGraph.RedrawCanvas(obj.canvas);
             }
@@ -1648,8 +1713,8 @@
             obj.Set('chart.ymax', max);
         }
         
-        obj.Set('chart.multiplier.x', 0);
-        obj.Set('chart.multiplier.w', 0);
+        //obj.Set('chart.multiplier.x', 0);
+        //obj.Set('chart.multiplier.w', 0);
 
         function Grow_inner ()
         {
@@ -1657,9 +1722,9 @@
                 obj.data[i] = data[i] * (numFrame/totalFrames);
             }
             
-            var multiplier = Math.pow(Math.sin(((numFrame / totalFrames) * 90) / 57.3), 20);
-            obj.Set('chart.multiplier.x', (numFrame / totalFrames) * multiplier);
-            obj.Set('chart.multiplier.w', (numFrame / totalFrames) * multiplier);
+            var multiplier = Math.pow(Math.sin(((numFrame / totalFrames) * 90) / (180 / PI)), 20);
+            //obj.Set('chart.multiplier.x', (numFrame / totalFrames) * multiplier);
+            //obj.Set('chart.multiplier.w', (numFrame / totalFrames) * multiplier);
             
             RGraph.Clear(obj.canvas);
             RGraph.RedrawCanvas(obj.canvas);
@@ -1725,8 +1790,10 @@
                 setTimeout('RGraph.Effects.Bar.Wave_inner_iterator(__rgraph_bar_wave_object__, '+idx+', '+(k / totalFrames)+');', delay * k);
             }
         }
-        
-        setTimeout(callback, (i * 150) + (totalFrames * delay), totalFrames, delay);
+
+        if (callback) {
+            setTimeout(callback, (i * 150) + (totalFrames * delay), totalFrames, delay);
+        }
     }
     
     
@@ -1746,20 +1813,49 @@
     }
 
 
+
     /**
-    * HProgress Grow effect
+    * HProgress Grow effect (which is also the VPogress Grow effect)
     * 
     * @param object obj The chart object
     */
+    RGraph.Effects.VProgress.Grow =
     RGraph.Effects.HProgress.Grow = function (obj)
     {
         var canvas        = obj.canvas;
         var context       = obj.context;
         var initial_value = obj.currentValue;
-        var diff          = obj.value - Number(obj.currentValue);
         var numFrames     = 30;
         var currentFrame  = 0
-        var increment     = diff  / numFrames;
+
+        if (typeof(obj.value) == 'object') {
+
+            if (RGraph.is_null(obj.currentValue)) {
+                obj.currentValue = [];
+                for (var i=0; i<obj.value.length; ++i) {
+                    obj.currentValue[i] = 0;
+                }
+            }
+
+            var diff      = [];
+            var increment = [];
+
+            for (var i=0; i<obj.value.length; ++i) {
+                diff[i]      = obj.value[i] - Number(obj.currentValue[i]);
+                increment[i] = diff[i] / numFrames;
+            }
+            
+            if (initial_value == null) {
+                initial_value = [];
+                for (var i=0; i< obj.value.length; ++i) {
+                    initial_value[i] = 0;
+                }
+            }
+
+        } else {
+            var diff = obj.value - Number(obj.currentValue);
+            var increment = diff  / numFrames;
+        }
         var callback      = arguments[2] ? arguments[2] : null;
 
         function Grow_hprogress_inner ()
@@ -1767,9 +1863,16 @@
             currentFrame++;
 
             if (currentFrame <= numFrames) {
-                
-                obj.value = initial_value + (increment * currentFrame);
-                
+
+                if (typeof(obj.value) == 'object') {
+                    obj.value = [];
+                    for (var i=0; i<initial_value.length; ++i) {
+                        obj.value[i] = initial_value[i] + (increment[i] * currentFrame);
+                    }
+                } else {
+                    obj.value = initial_value + (increment * currentFrame);
+                }
+
                 RGraph.Clear(obj.canvas);
                 RGraph.RedrawCanvas(obj.canvas);
                 
@@ -1783,39 +1886,6 @@
         RGraph.Effects.UpdateCanvas(Grow_hprogress_inner);
     }
 
-
-    /**
-    * VProgress Grow effect
-    * 
-    * @param object obj The chart object
-    */
-    RGraph.Effects.VProgress.Grow = function (obj)
-    {
-        var initial_value = obj.currentValue;
-        var diff         = obj.value - Number(obj.currentValue);
-        var numFrames    = 30;
-        var currentFrame = 0
-        var increment    = diff  / numFrames;
-        var callback     = arguments[2] ? arguments[2] : null;
-
-        function Grow_vprogress_inner ()
-        {
-            currentFrame++;
-
-            if (currentFrame <= 30) {
-                obj.value = initial_value + (increment * currentFrame);
-                RGraph.Clear(obj.canvas);
-                RGraph.RedrawCanvas(obj.canvas);
-                
-                RGraph.Effects.UpdateCanvas(Grow_vprogress_inner);
-
-            } else if (callback) {
-                callback(obj);
-            }
-        }
-        
-        RGraph.Effects.UpdateCanvas(Grow_vprogress_inner);
-    }
 
 
     /**
