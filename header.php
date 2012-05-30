@@ -27,9 +27,6 @@
 			
 		</script>
 		<?php endif;?>
-		<!--[if IE]>
-		<script type="text/javascript" src="<?=THEME_STATIC_URL?>/rgraph/excanvas/excanvas.compiled.js"></script>
-		<![endif]-->
 	</head>
 	<body class="<?=body_classes()?>">
 		<div class="container">
