@@ -93,7 +93,7 @@ function rgraph_shortcode($attr, $content=null) {
 			$fallback_img = get_the_post_thumbnail($graphID,array($graph_w,$graph_h)); 
 			if ($fallback_img) { ?>
 				<?=$fallback_img?>
-			<?php } ?>
+			<?php } else { print "<p style='font-weight:bold; text-align:center; color: #666'>Your browser cannot display the HTML5 canvas element.  Please upgrade your browser to view this graph.</p>"; } ?>
 			</canvas>
 		</div>
 	<?php
