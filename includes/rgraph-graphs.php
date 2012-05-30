@@ -299,7 +299,7 @@ foreach ($all_graphs as $object) {
 	
 	//ExCanvas initialization
 	$results .= "
-	if ( ($.browser.msie) && ($.browser.version < 9) ) {
+	if ( ($.browser.msie) && ($.browser.version < 9) && ($(#".$rgraphObject.").has('img') == false) ) {
 		var canvasWrap = $('#".$rgraphObject."_wrap'); 
 		var canvas 	   = document.createElement('canvas');
 		canvas.attr('width', ".$object->graphDimensions[0].");
