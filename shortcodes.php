@@ -92,7 +92,7 @@ function rgraph_shortcode($attr, $content=null) {
 			<?php 
 			$fallback_img = get_the_post_thumbnail($graphID,array($graph_w,$graph_h)); 
 			if ($fallback_img) { ?>
-				<img src="<?=$fallback_img?>" />
+				<?=$fallback_img?>
 			<?php } ?>
 			</canvas>
 		</div>
