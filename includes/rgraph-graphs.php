@@ -263,7 +263,7 @@ foreach ($all_graphs as $object) {
 		if ($object->gridLines_h == "none") {
 			$results .= $rgraphObject.".Set('chart.background.grid.autofit.numhlines', 0); \n";
 		}
-		else { $results .= $rgraphObject.".Set('chart.background.grid.autofit.numhlines', ".$object->gridLines_v."); \n"; }
+		else { $results .= $rgraphObject.".Set('chart.background.grid.autofit.numhlines', ".$object->gridLines_h."); \n"; }
 	}
 	//Number of vertical gridlines
 	if ($object->gridLines_v) {
