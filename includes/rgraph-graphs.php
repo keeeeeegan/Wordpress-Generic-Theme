@@ -136,6 +136,9 @@ foreach ($all_graphs as $object) {
 	$results .= $rgraphObject.".Set('chart.text.font', 'Helvetica'); \n";
 	$results .= $rgraphObject.".Set('chart.title.vpos', 0.2); \n"; //Setting this by default as most graphs seem to need the extra spacing
 	$results .= $rgraphObject.".Set('chart.title.size', 14); \n";
+	if ($object->graphType == "Pie" || $object->graphType == "Bar") {
+		$results .= $rgraphObject.".Set('chart.tooltips.event', 'onmousemove'); \n"; //Necessary for pie graphs--see readme
+	}
 		
 	//Gutters
 	if ($object->gutter_t) {
@@ -203,12 +206,7 @@ foreach ($all_graphs as $object) {
 		$tooltipString = str_replace("''", "", $tooltipString);		 //Remove any empty sets of data
 		$tooltipString = str_replace(",']);", $object->units_post."']);", $tooltipString); //Remove stray commas from end of list; add a post units value to the last value in the string
 		$tooltipString = str_replace("',", $object->units_post."',", $tooltipString);		 //Add post units to the rest of the values in the string
-		$results .= $tooltipString."\n";
-		
-		if ($object->graphType == "Pie" || $object->graphType == "Bar") {
-			$results .= $rgraphObject.".Set('chart.tooltips.event', 'onmousemove'); \n";
-		}
-		
+		$results .= $tooltipString."\n";		
 	}
 	
 	//Add tickmarks for line graphs only
