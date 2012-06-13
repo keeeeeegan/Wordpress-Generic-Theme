@@ -205,7 +205,7 @@ foreach ($all_graphs as $object) {
 		$tooltipString = str_replace("',", $object->units_post."',", $tooltipString);		 //Add post units to the rest of the values in the string
 		$results .= $tooltipString."\n";
 		
-		if ($object->graphType == "Pie") {
+		if ($object->graphType == "Pie" || $object->graphType == "Bar") {
 			$results .= $rgraphObject.".Set('chart.tooltips.event', 'onmousemove'); \n";
 		}
 		
