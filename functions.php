@@ -324,7 +324,7 @@ Config::$scripts = array(
 	THEME_STATIC_URL.'/rgraph/libraries/RGraph.common.tooltips.js',
 	THEME_STATIC_URL.'/rgraph/build/rgraph.graphlibs.compressed.js',
 	THEME_STATIC_URL.'/rgraph/libraries/inview.js',
-	array('name' => 'rgraph-graphs',  'src' => THEME_URL.'/includes/rgraph-js.js',),
+	array('name' => 'rgraph-graphs',  'src' => THEME_URL.'/includes/rgraph-js.js?'.time(),),
 	array('name' => 'base-script',  'src' => THEME_JS_URL.'/webcom-base.js',),
 	array('name' => 'theme-script', 'src' => THEME_JS_URL.'/script.js',),
 );
