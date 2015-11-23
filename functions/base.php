@@ -1199,7 +1199,7 @@ function set_defaults_for_options() {
  * */
 function __shutdown__() {
 	global $timer;
-	$elapsed = round( $timer->elapsed() * 1000 );
+	$elapsed = round( $timer->elapsed * 1000 );
 	debug( "{$elapsed} milliseconds" );
 }
 add_action( 'shutdown', '__shutdown__' );
