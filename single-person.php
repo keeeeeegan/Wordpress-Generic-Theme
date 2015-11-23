@@ -2,7 +2,7 @@
 <?php get_header(); the_post(); ?>
 	<div class="page-content person-profile">
 		<div class="row">
-			<div class="span2 details">
+			<div class="col-md-2 col-sm-2 details">
 
 				<?php
 				$title     = get_post_meta( $post->ID, 'person_jobtitle', True );
@@ -27,7 +27,7 @@
 				<?php endif; ?>
 
 			</div>
-			<div class="span10">
+			<div class="col-md-10 col-sm-10">
 				<h2><?php echo $post->post_title; ?><?php echo ( $title == '' ) ?: ' - ' . $title; ?></h2>
 				<?php echo $content = str_replace( ']]>', ']]>', apply_filters( 'the_content', $post->post_content ) ); ?>
 			</div>

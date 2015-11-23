@@ -443,7 +443,7 @@ Config::$styles = array(
 
 Config::$scripts = array(
 	array( 'admin' => True, 'src' => THEME_JS_URL.'/admin.js', ),
-	array( 'name' => 'ucfhb-script', 'src' => '//universityheader.ucf.edu/bar/js/university-header.js', ),
+	array( 'name' => 'ucfhb-script', 'src' => '//universityheader.ucf.edu/bar/js/university-header.js?use-1200-breakpoint=1', ),
 	array( 'name' => 'theme-script', 'src' => THEME_JS_URL.'/script.min.js', ),
 );
 

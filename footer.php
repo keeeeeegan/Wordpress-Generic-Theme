@@ -11,22 +11,22 @@
 				) );
 				?>
 				<div class="row" id="footer-widget-wrap">
-					<div class="footer-widget-1 span3">
+					<div class="footer-widget-1 col-md-3 col-sm-3">
 						<?php if ( !function_exists( 'dynamic_sidebar' ) or !dynamic_sidebar( 'Footer - Column One' ) ): ?>
 							<a class="ignore-external" href="http://www.ucf.edu"><img src="<?php echo THEME_IMG_URL; ?>/logo.png" alt="" title=""></a>
 						<?php endif; ?>
 					</div>
-					<div class="footer-widget-2 span3">
+					<div class="footer-widget-2 col-md-3 col-sm-3">
 						<?php if ( !function_exists( 'dynamic_sidebar' ) or !dynamic_sidebar( 'Footer - Column Two' ) ): ?>
 						&nbsp;
 						<?php endif; ?>
 					</div>
-					<div class="footer-widget-3 span3">
+					<div class="footer-widget-3 col-md-3 col-sm-3">
 						<?php if ( !function_exists( 'dynamic_sidebar' ) or !dynamic_sidebar( 'Footer - Column Three' ) ): ?>
 						&nbsp;
 						<?php endif; ?>
 					</div>
-					<div class="footer-widget-4 span3">
+					<div class="footer-widget-4 col-md-3 col-sm-3">
 						<?php if ( !function_exists( 'dynamic_sidebar' ) or !dynamic_sidebar( 'Footer - Column Four' ) ): ?>
 							<?php
 							$site_contact = get_theme_option( 'site_contact' );

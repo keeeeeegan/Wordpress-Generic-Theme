@@ -1,3 +1,5 @@
+// scss-lint:disable ImportantRule
+
 // Disable responsiveness in IE8:
 .ie8 {
   // Create grid for IE8 because it doesn't understand media queries
@@ -27,3 +29,5 @@
     width: $container-md;
   }
 }
+
+// scss-lint:enable ImportantRule

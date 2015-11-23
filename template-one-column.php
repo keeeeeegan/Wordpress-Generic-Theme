@@ -5,7 +5,7 @@
 ?>
 <?php get_header(); the_post();?>
 	<div class="row page-content" id="<?php echo $post->post_name; ?>">
-		<div class="span12">
+		<div class="col-md-12 col-sm-12">
 			<article>
 				<?php if ( !is_front_page() ) { ?>
 					<h1><?php the_title(); ?></h1>

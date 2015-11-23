@@ -282,7 +282,7 @@ function display_news( $header='h2' ) {
 				<p>
 					<a class="image ignore-external" href="<?php echo $item->get_link(); ?>">
 						<?php if ( $image ): ?>
-						<img src="<?php echo $image; ?>" alt="Feed image for <?php echo $item->get_title(); ?>">
+						<img class="img-responsive" src="<?php echo $image; ?>" alt="Feed image for <?php echo $item->get_title(); ?>">
 						<?php endif; ?>
 					</a>
 					<a class="description ignore-external"  href="<?php echo $item->get_link(); ?>">

@@ -1,21 +1,23 @@
 // Import individual components for our theme here:
 
 // Base mixins, utility styles
-// @import 'mixins';
-// @import 'utilities';
+@import 'mixins';
+@import 'utilities';
 
 // Base styles for typography, tables, forms, and images
-// @import 'type';
-// @import 'tables';
-// @import 'forms';
+@import 'type';
+@import 'tables';
+@import 'forms';
 
-// Styles for components and Bootstrap component overrides
-// @import 'components';
+// Styles for custom components and Bootstrap component overrides
+@import 'components';
 
-// Styles for our base header/footer templates and specific, per-view templates
-// @import 'layout';
+// Styles for our base header/footer templates
+@import 'header';
+@import 'footer';
+
+// Add more view-specific overrides here.  Try to follow WordPress template
+// naming conventions as closely as possible--e.g. home.php styles should go in
+// a file named _home.scss.
 // @import 'home';
 // @import 'page';
-
-// TODO: split these styles out into separate, cleaned-up scss partials.
-@import '../css/webcom-base';

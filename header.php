@@ -62,14 +62,14 @@
 		<div class="container">
 			<div class="row">
 				<div id="header" class="row-border-bottom-top">
-					<h1 class="span9"><a href="<?php echo bloginfo('url'); ?>"><?php echo bloginfo('name'); ?></a></h1>
+					<h1 class="col-md-9 col-sm-9"><a href="<?php echo bloginfo('url'); ?>"><?php echo bloginfo('name'); ?></a></h1>
 					<?php
 					$facebook_url = get_theme_option( 'facebook_url' );
 					$twitter_url = get_theme_option( 'twitter_url' );
 
 					if ( $facebook_url || $twitter_url ):
 					?>
-					<ul class="social menu horizontal span3">
+					<ul class="social menu horizontal col-md-3 col-sm-3">
 						<?php if ( $facebook_url ): ?>
 						<li><a class="ignore-external facebook" href="<?php echo $facebook_url; ?>">Facebook</a></li>
 						<?php endif; ?>
@@ -78,7 +78,7 @@
 						<?php endif; ?>
 					</ul>
 					<?php else: ?>
-					<div class="social span3">&nbsp;</div>
+					<div class="social col-md-3 col-sm-3">&nbsp;</div>
 					<?php endif; ?>
 				</div>
 			</div>

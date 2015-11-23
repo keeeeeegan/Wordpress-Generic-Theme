@@ -88,7 +88,7 @@ function sc_person_picture_list( $atts ) {
 			?><div class="row"><?php
 		}
 	?>
-		<div class="span2 person-picture-wrap">
+		<div class="col-md-2 col-sm-2 person-picture-wrap">
 			<?php if ( $link ): ?><a href="<?php echo get_permalink( $person->ID ); ?>"><?php endif; ?>
 				<img src="<?php echo $image_url ? $image_url : get_bloginfo( 'stylesheet_directory' ).'/static/img/no-photo.jpg'; ?>">
 				<div class="name"><?php echo Person::get_name( $person ); ?></div>
@@ -121,7 +121,7 @@ function sc_post_type_search( $params=array(), $content='' ) {
 		'meta_value'              => '',
 		'show_empty_sections'     => false,
 		'non_alpha_section_name'  => 'Other',
-		'column_width'            => 'span4',
+		'column_width'            => 'col-md-4 col-sm-4',
 		'column_count'            => '3',
 		'order_by'                => 'title',
 		'order'                   => 'ASC',
@@ -259,7 +259,7 @@ function sc_post_type_search( $params=array(), $content='' ) {
 		<div class="post-type-search-header">
 			<form class="post-type-search-form" action="." method="get">
 				<label><?php echo $params['default_search_label']; ?></label>
-				<input type="text" class="span3" placeholder="<?php echo $params['default_search_text']; ?>">
+				<input type="text" class="col-md-3 col-sm-3" placeholder="<?php echo $params['default_search_text']; ?>">
 			</form>
 		</div>
 		<div class="post-type-search-results"></div>
