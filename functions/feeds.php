@@ -225,7 +225,7 @@ function display_flickr( $header='h2' ) {
 
 	if ( count( $photos ) ):?>
 		<<?php echo $header; ?>><a href="<?php echo get_flickr_stream_url(); ?>">Flickr Stream</a></<?php echo $header; ?>>
-		<ul class="flickr-stream">
+		<ul class="flickr-stream list-unstyled">
 			<?php foreach ( $photos as $photo ):?>
 			<li><a class="ignore-external" href="<?php echo $photo['page']?>"><img height="75" width="75" src="<?php echo $photo['square']; ?>" title="<?php echo $photo['title']; ?>"></a></li>
 			<?php endforeach;?>
@@ -275,7 +275,7 @@ function display_news( $header='h2' ) {
 ?>
 	<?php if ( count( $news ) ): ?>
 		<<?php echo $header; ?>><a href="<?php echo $news[0]->get_feed()->get_link(); ?>"><?php echo $news[0]->get_feed()->get_title(); ?></a></<?php echo $header; ?>>
-		<ul class="news">
+		<ul class="news list-unstyled">
 			<?php foreach ( $news as $key=>$item ): $image = get_article_image( $item ); $first = ( $key == 0 ); ?>
 			<li class="item<?php if ( $first ): ?> first<?php else: ?> not-first<?php endif; ?>">
 				<h3 class="title"><a href="<?php echo $item->get_link(); ?>" class="ignore-external title"><?php echo $item->get_title(); ?></a></h3>

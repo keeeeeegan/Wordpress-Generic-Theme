@@ -1,5 +1,8 @@
-<?php get_header(); ?>
-	<div class="row page-content nodescription" id="home" data-template="home-nodescription">
+<?php disallow_direct_load( 'template-home-nodescription.php' ); ?>
+<?php get_header(); the_post(); ?>
+
+<main class="site-main home-nodescription">
+	<div class="container">
 		<?php
 		$content = '';
 		$page = get_page_by_title( 'Home' );
@@ -15,4 +18,6 @@
 			<p>To edit this content, <a href="<?php echo get_admin_url(); ?>post-new.php?post_type=page">create a new page</a> titled "Home" and add your content. The home page image can be set by selecting an uploaded file on the <a href="<?php echo get_admin_url(); ?>admin.php?page=theme-options#site">theme options page</a> in the admin.</p>
 		<?php endif; ?>
 	</div>
-<?php get_footer();?>
+</main>
+
+<?php get_footer(); ?>

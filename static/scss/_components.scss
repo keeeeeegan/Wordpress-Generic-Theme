@@ -184,3 +184,80 @@
     @include rotate(359deg);
   }
 }
+
+
+// Below-the-fold components
+.below-the-fold {
+  margin: 20px 0;
+
+  h2 {
+    font-size: 18px;
+    font-weight: 600;
+
+    a {
+      color: #000;
+    }
+  }
+}
+
+.flickr-stream {
+  @include clearfix();
+
+  li {
+    display: block;
+    float: left;
+    margin: 0 4px 4px 0;
+  }
+}
+
+.news {
+  .title,
+  a {
+    color: #000;
+  }
+
+  .title {
+    font-size: 16px;
+    font-weight: 600;
+  }
+}
+
+.events {
+  border-collapse: separate;
+  border-spacing: 16px;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  top: -16px;
+
+  .date {
+    text-align: center;
+    width: 1px;
+    padding: 8px 12px;
+    background-color: #fef7c8;
+    color: #666;
+    font-weight: bold;
+    border: 1px solid #ded7a8;
+    box-shadow: 1px 1px 6px rgba(0, 0, 0, .2);
+  }
+
+  .month {
+    font-size: 18px;
+  }
+
+  .day {
+    font-size: 16px;
+  }
+
+  .title {
+    font-size: 14px;
+    padding-left: 10px;
+    text-align: left;
+
+    .wrap {
+      display: block;
+      max-height: 50px;
+      overflow: hidden;
+    }
+  }
+}

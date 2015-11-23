@@ -1,26 +1,31 @@
 <?php disallow_direct_load( 'single.php' ); ?>
 <?php get_header(); the_post(); ?>
 
-	<div class="row page-content" id="<?php echo $post->post_name; ?>">
-		<div class="col-md-9 col-sm-9">
-			<article>
-				<?php if ( !is_front_page() ) { ?>
+<main class="site-main single" id="<?php echo $post->post_type; ?>-<?php echo $post->post_name; ?>">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-9 col-sm-9">
+				<article class="page-content">
+					<?php if ( !is_front_page() ): ?>
 						<h1><?php the_title(); ?></h1>
-				<?php } ?>
-				<?php the_content(); ?>
-			</article>
+					<?php endif; ?>
+					<?php the_content(); ?>
+				</article>
+			</div>
+			<div class="col-md-3 col-sm-3">
+				<aside class="sidebar">
+					<?php echo get_sidebar(); ?>
+				</aside>
+			</div>
 		</div>
 
-		<div id="sidebar" class="col-md-3 col-sm-3">
-			<?php echo get_sidebar(); ?>
-		</div>
+		<?php
+		$hide_fold = get_post_meta( $post->ID, 'post_hide_fold', True );
+		if ( $hide_fold && $hide_fold[0] !== 'On' ) {
+			get_template_part( 'includes/below-the-fold' );
+		}
+		?>
 	</div>
-
-	<?php
-	$hide_fold = get_post_meta( $post->ID, 'post_hide_fold', True );
-	if ( $hide_fold && $hide_fold[0] !== 'On' ) {
-		get_template_part( 'includes/below-the-fold' );
-	}
-	?>
+</main>
 
 <?php get_footer(); ?>

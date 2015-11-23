@@ -106,8 +106,66 @@ function enqueue_frontend_theme_assets() {
 	wp_deregister_script( 'jquery' );
 	wp_register_script( 'jquery', '//code.jquery.com/jquery-1.11.0.min.js' );
 	wp_enqueue_script( 'jquery' );
+
+	// Enqueue post-specific CSS.
+	global $post;
+	if ( $post ) {
+		$custom_css_id = get_post_meta( $post->ID, $post->post_type . '_stylesheet', True );
+		if ( $custom_css_id ) {
+			wp_enqueue_style( $post->post_name . '-stylesheet', wp_get_attachment_url( $custom_css_id ) );
+		}
+	}
 }
 add_action( 'wp_enqueue_scripts', 'enqueue_frontend_theme_assets' );
+
+
+/**
+ * Hook frontend theme script output into wp_head().
+ **/
+function hook_frontend_theme_scripts() {
+	ob_start();
+?>
+	<!--[if lte IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<?php if ( GA_ACCOUNT or CB_UID ): ?>
+	<script>
+
+		<?php if ( GA_ACCOUNT ): ?>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+		ga('create', '<?php echo GA_ACCOUNT; ?>', 'auto');
+		ga('send', 'pageview');
+		<?php endif; ?>
+
+		<?php if ( CB_UID ): ?>
+		var CB_UID      = '<?php echo CB_UID; ?>';
+		var CB_DOMAIN   = '<?php echo CB_DOMAIN; ?>';
+		<?php endif; ?>
+
+	</script>
+	<?php endif;?>
+
+	<script>
+		var PostTypeSearchDataManager = {
+			'searches' : [],
+			'register' : function(search) {
+				this.searches.push(search);
+			}
+		};
+		var PostTypeSearchData = function(column_count, column_width, data) {
+			this.column_count = column_count;
+			this.column_width = column_width;
+			this.data         = data;
+		};
+	</script>
+<?php
+	echo ob_get_clean();
+}
+add_action( 'wp_head', 'hook_frontend_theme_scripts' );
 
 
 /**
